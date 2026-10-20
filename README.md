@@ -19,7 +19,7 @@ O objetivo é demonstrar, de ponta a ponta, o processo de encontrar, explorar de
 | 5 | **API7 — Server-Side Request Forgery (SSRF)** | Forçar o servidor a fazer requisições a um destino arbitrário | [docs](docs/vulnerabilidades/05-ssrf.md) |
 | 6 | **API5 — Broken Function Level Authorization (BFLA)** | Usuário comum acessando função administrativa | [docs](docs/vulnerabilidades/06-bfla.md) |
 
-Cada documento segue o mesmo formato: classificação OWASP, pré-condições, passo a passo da requisição, evidência, impacto/risco e recomendação de correção.
+Cada documento segue o mesmo formato: classificação OWASP, pré-condições, passo a passo da requisição, evidência, impacto/risco e recomendação de correção. **As 6 vulnerabilidades foram reproduzidas e confirmadas** contra uma instância local do crAPI; as respostas reais estão em [evidencias/](evidencias/) e podem ser regeradas com [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh).
 
 ---
 
@@ -34,7 +34,9 @@ Cada documento segue o mesmo formato: classificação OWASP, pré-condições, p
 ├── postman/
 │   ├── crAPI-security.postman_collection.json   # requisições de cada ataque
 │   └── crAPI.postman_environment.json           # variáveis de ambiente
-├── evidencias/                       # prints das respostas (uma pasta por vulnerabilidade)
+├── scripts/
+│   └── capturar-evidencias.sh        # executa todos os ataques e salva as respostas reais
+├── evidencias/                       # evidências das respostas (uma pasta por vulnerabilidade)
 ├── .zap/
 │   └── rules.tsv                     # ajuste fino de alertas do OWASP ZAP
 └── .github/workflows/
@@ -58,6 +60,15 @@ Instruções completas de ambiente em [docs/00-ambiente-crapi.md](docs/00-ambien
 2. Importe a coleção e o environment da pasta [postman/](postman/) no Postman.
 3. Ajuste a variável `base_url` do environment para o endereço do seu crAPI (por padrão `http://localhost:8888`).
 4. Siga cada documento em [docs/vulnerabilidades/](docs/vulnerabilidades/) para reproduzir e entender cada falha.
+
+Para reproduzir todos os ataques de uma vez e regenerar as evidências:
+
+```bash
+BASE_URL=http://localhost:8888 \
+EMAIL_VITIMA=vitima@teste.local SENHA_VITIMA='...' \
+EMAIL_ATACANTE=atacante@teste.local SENHA_ATACANTE='...' \
+bash scripts/capturar-evidencias.sh
+```
 
 ---
 

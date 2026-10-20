@@ -18,4 +18,7 @@ build/
 # VS Code
 .vscode/
 
+# Deploy local do crAPI (compose oficial baixado da fonte + dados locais)
+.crapi-deploy/
+
 Documentos internos/

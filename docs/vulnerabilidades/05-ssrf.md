@@ -38,11 +38,23 @@ Content-Type: application/json
 
 3. Se a resposta do destino for refletida de volta na resposta da API, confirma-se também o vazamento do conteúdo acessado.
 
-> **Confirmar na instância:** o nome exato do campo (`mechanic_api` vs `merchant_api`) e os demais campos obrigatórios do corpo variam por versão — capture o fluxo legítimo de "contact mechanic" primeiro.
+> O campo correto é **`mechanic_api`** (corpo vazio retorna `{"mechanic_api":["This field is required."]}`). Os demais campos obrigatórios são `mechanic_code`, `problem_details`, `vin` e `number_of_repeats`.
 
 ## 4. Evidência
 
-> _A preencher após execução._ Print salvo em `evidencias/05-ssrf/`. Mostrar a requisição com a URL injetada e a prova de que o servidor a acessou — log do host controlado recebendo o hit, ou a resposta do serviço interno refletida na resposta da API.
+**Confirmado contra a instância local** — captura em [`evidencias/05-ssrf/captura.txt`](../../evidencias/05-ssrf/captura.txt).
+
+Apontando `mechanic_api` para o **MailHog interno** (`http://mailhog:8025/api/v2/messages`), um serviço que o atacante não alcança de fora:
+
+```
+POST /workshop/api/merchant/contact_mechanic
+{ "mechanic_api": "http://mailhog:8025/api/v2/messages", "mechanic_code": "TRAC_JHN", ... }
+
+HTTP 200
+{ "response_from_mechanic_api": { "total": 2, "items": [ { ...e-mails internos capturados... } ] } }
+```
+
+O servidor buscou o serviço interno e **refletiu todo o conteúdo** (os e-mails do MailHog) na resposta — SSRF com vazamento de dados internos.
 
 ## 5. Por que é um risco
 
