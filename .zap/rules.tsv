@@ -1,0 +1,15 @@
+# Ajuste fino de alertas do OWASP ZAP Baseline.
+# Formato (separado por TAB):  <ID_do_alerta>	<acao>	<comentario opcional>
+# Acoes possiveis:
+#   WARN   -> reporta como aviso (nao falha o scan)   [padrao]
+#   FAIL   -> trata como falha
+#   IGNORE -> suprime o alerta
+#
+# O crAPI e intencionalmente vulneravel, entao o objetivo deste arquivo nao e
+# "zerar" alertas, e sim documentar decisoes conscientes de ruido do scan passivo.
+# IDs de referencia: https://www.zaproxy.org/docs/alerts/
+#
+# Exemplos (descomente/ajuste conforme o relatorio real):
+# 10015	IGNORE	Incomplete or No Cache-control Header (ruido em assets estaticos)
+# 10096	IGNORE	Timestamp Disclosure (baixo valor neste contexto de laboratorio)
+# 10027	IGNORE	Information Disclosure - Suspicious Comments

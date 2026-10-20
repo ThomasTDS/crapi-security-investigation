@@ -1,0 +1,64 @@
+name: zap-baseline
+
+# Scan passivo de seguranca (OWASP ZAP Baseline) contra uma instancia efemera do crAPI.
+# Disparo manual: o crAPI e pesado e proposital, entao nao faz sentido rodar em todo push.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write   # a ZAP baseline action pode abrir/atualizar uma issue com os alertas
+
+jobs:
+  zap-baseline:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Baixar docker-compose oficial do crAPI
+        run: |
+          curl -sSfL -o docker-compose.yml \
+            https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml
+
+      - name: Subir o crAPI
+        run: docker compose -f docker-compose.yml --compatibility up -d
+
+      - name: Aguardar o gateway responder
+        run: |
+          echo "Aguardando o crAPI em http://localhost:8888 ..."
+          for i in $(seq 1 60); do
+            if curl -sf -o /dev/null http://localhost:8888/; then
+              echo "crAPI no ar."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "crAPI nao respondeu a tempo." >&2
+          docker compose -f docker-compose.yml logs --tail=100
+          exit 1
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.12.0
+        with:
+          target: 'http://localhost:8888'
+          rules_file_name: '.zap/rules.tsv'
+          # -I: nao falha o job por alertas de WARN (o crAPI e vulneravel de proposito;
+          # o valor aqui e o relatorio, nao um gate de build).
+          cmd_options: '-I'
+          allow_issue_writing: false
+
+      - name: Publicar relatorio do ZAP
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap-baseline-report
+          path: |
+            report_html.html
+            report_md.md
+            report_json.json
+          if-no-files-found: ignore
+
+      - name: Derrubar o crAPI
+        if: always()
+        run: docker compose -f docker-compose.yml down -v
