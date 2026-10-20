@@ -43,7 +43,11 @@ Content-Type: application/json
 
 ## 4. Evidência
 
-> _A preencher após execução._ Print salvo em `evidencias/02-broken-authentication/`. Mostrar: (a) a sequência de respostas de erro durante o brute-force e (b) a resposta de sucesso que efetiva a troca de senha, seguida de login bem-sucedido com a nova senha na conta da vítima.
+**Confirmado contra a instância local** — captura em [`evidencias/02-broken-authentication/captura.txt`](../../evidencias/02-broken-authentication/captura.txt).
+
+- **Sem rate limiting:** 30 tentativas seguidas com OTP errado no endpoint `v3/check-otp` retornaram **29×HTTP 500 (`Invalid OTP`) + 1×503** — nenhuma resposta `429`, nenhum bloqueio de conta. O OTP é de **4 dígitos** (apenas 10.000 combinações), então o brute-force é trivial.
+- **Takeover efetivado:** com o OTP correto, a resposta foi `{"message":"OTP verified","status":200}` e o login com a **nova senha** definida pelo atacante retornou **HTTP 200** — ou seja, a conta da vítima foi assumida sem acesso ao e-mail dela.
+- O endpoint `v2/check-otp` também existe e aceita tentativas, reforçando o problema de versões antigas mantidas no ar.
 
 ## 5. Por que é um risco
 

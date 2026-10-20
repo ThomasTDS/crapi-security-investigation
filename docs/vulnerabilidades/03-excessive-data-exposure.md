@@ -28,11 +28,21 @@ Authorization: Bearer <token>
 
 3. Esses campos vazados alimentam outros ataques: o `email` habilita o [brute-force de OTP](02-broken-authentication.md); o `vehicleid` habilita o [BOLA de localização](01-bola-localizacao-veiculo.md).
 
-> **Confirmar na instância:** comparar o JSON bruto da resposta com o que a tela do fórum realmente renderiza — a diferença é a evidência do vazamento.
-
 ## 4. Evidência
 
-> _A preencher após execução._ Print salvo em `evidencias/03-excessive-data-exposure/`. Destacar no JSON os campos sensíveis (e-mail, vehicleid) que não aparecem na UI, lado a lado com a tela do fórum.
+**Confirmado contra a instância local** — captura em [`evidencias/03-excessive-data-exposure/captura.txt`](../../evidencias/03-excessive-data-exposure/captura.txt).
+
+A resposta de `GET /community/api/v2/community/posts/recent` inclui, para cada autor, um objeto com campos sensíveis que a tela do fórum nunca exibe:
+
+```json
+"author": {
+  "nickname": "Adam",
+  "email": "adam007@example.com",
+  "vehicleid": "f89b5f21-7829-45cb-a650-299a61090378"
+}
+```
+
+O `email` e o `vehicleid` vazados aqui foram usados diretamente nos ataques de [BOLA](01-bola-localizacao-veiculo.md) e de [brute-force de OTP](02-broken-authentication.md).
 
 ## 5. Por que é um risco
 

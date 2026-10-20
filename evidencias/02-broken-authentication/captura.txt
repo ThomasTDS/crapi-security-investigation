@@ -1,0 +1,9 @@
+# Broken Authentication (API2) — brute-force de OTP no reset de senha
+# 1) dispara OTP:
+{"message":"OTP Sent on the provided email, vitima@teste.local","status":200}
+----------------------------------------------------------------
+# 2) 30 tentativas com OTP errado -> distribuição de status (sem bloqueio = brute-force viável):
+     29 500
+      1 503
+----------------------------------------------------------------
+# Prova: nenhuma resposta 429/bloqueio; OTP de 4 dígitos (10.000 combinações) é forçável.
