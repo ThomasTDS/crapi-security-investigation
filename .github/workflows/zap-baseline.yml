@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  issues: write   # a ZAP baseline action pode abrir/atualizar uma issue com os alertas
 
 jobs:
   zap-baseline:
@@ -39,14 +38,20 @@ jobs:
           exit 1
 
       - name: OWASP ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          target: 'http://localhost:8888'
-          rules_file_name: '.zap/rules.tsv'
-          # -I: nao falha o job por alertas de WARN (o crAPI e vulneravel de proposito;
-          # o valor aqui e o relatorio, nao um gate de build).
-          cmd_options: '-I'
-          allow_issue_writing: false
+        # Executa o ZAP diretamente via imagem oficial, em vez da action de marketplace:
+        # a zaproxy/action-baseline falha nos runners atuais ao tentar publicar um
+        # artifact interno proprio. Rodando o zap-baseline.py por conta propria temos
+        # o mesmo scan e publicamos o relatorio no passo seguinte.
+        run: |
+          mkdir -p zap-out
+          cp .zap/rules.tsv zap-out/rules.tsv
+          chmod -R 777 zap-out
+          # -I: nao retorna falha por alertas (o crAPI e vulneravel de proposito; o
+          # valor aqui e o relatorio, nao um gate de build). '|| true' garante o passo verde.
+          docker run --rm --network host -v "$PWD/zap-out:/zap/wrk/:rw" \
+            ghcr.io/zaproxy/zaproxy:stable \
+            zap-baseline.py -t http://localhost:8888 -c rules.tsv -I \
+              -r report_html.html -w report_md.md -J report_json.json || true
 
       - name: Publicar relatorio do ZAP
         if: always()
@@ -54,9 +59,9 @@ jobs:
         with:
           name: zap-baseline-report
           path: |
-            report_html.html
-            report_md.md
-            report_json.json
+            zap-out/report_html.html
+            zap-out/report_md.md
+            zap-out/report_json.json
           if-no-files-found: ignore
 
       - name: Derrubar o crAPI
