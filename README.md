@@ -14,6 +14,8 @@ O objetivo é demonstrar, de ponta a ponta, o processo de encontrar, explorar de
 
 ---
 
+> 📋 **[Relatório executivo consolidado](docs/RELATORIO-EXECUTIVO.md)** — sumário das 10 falhas com severidade, temas recorrentes e recomendações prioritárias.
+
 ## Vulnerabilidades cobertas
 
 | # | Categoria (OWASP API Security Top 10 — 2023) | Cenário no crAPI | Documentação |
