@@ -14,6 +14,8 @@ The goal is to demonstrate, end to end, the process of finding, safely exploitin
 
 ---
 
+> 📋 **[Consolidated executive report](docs/en/executive-report.md)** — summary of the 10 findings with severity, recurring themes, and priority recommendations.
+
 ## Covered vulnerabilities
 
 | # | Category (OWASP API Security Top 10 — 2023) | crAPI scenario | Docs |
