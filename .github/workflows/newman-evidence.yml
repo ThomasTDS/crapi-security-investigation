@@ -1,0 +1,68 @@
+name: newman-evidence
+
+# Gera o relatorio HTML de evidencias rodando a colecao Newman contra uma
+# instancia efemera do crAPI, e publica o relatorio como artifact.
+# Disparo manual: o crAPI e pesado e proposital, entao nao roda em todo push.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  newman-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Baixar docker-compose oficial do crAPI
+        run: |
+          curl -sSfL -o docker-compose.yml \
+            https://raw.githubusercontent.com/OWASP/crAPI/main/deploy/docker/docker-compose.yml
+
+      - name: Subir o crAPI
+        run: docker compose -f docker-compose.yml --compatibility up -d
+
+      - name: Aguardar o gateway responder
+        run: |
+          echo "Aguardando o crAPI em http://localhost:8888 ..."
+          for i in $(seq 1 60); do
+            if curl -sf -o /dev/null http://localhost:8888/; then
+              echo "crAPI no ar."
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "crAPI nao respondeu a tempo." >&2
+          docker compose -f docker-compose.yml logs --tail=100
+          exit 1
+
+      - name: Registrar a conta do atacante
+        # A colecao de evidencias loga como atacante@teste.local; o crAPI em CI
+        # comeca vazio, entao criamos a conta antes de rodar o Newman.
+        run: |
+          curl -s -o /dev/null -w "signup: %{http_code}\n" \
+            -X POST http://localhost:8888/identity/api/auth/signup \
+            -H "Content-Type: application/json" \
+            -d '{"name":"Atacante Mal","email":"atacante@teste.local","number":"4160000002","password":"Atacante@2026!"}'
+
+      - name: Rodar a colecao e gerar o relatorio (Newman)
+        run: bash scripts/gerar-relatorio-newman.sh
+
+      - name: Publicar relatorio de evidencias
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: relatorio-newman
+          path: evidencias/relatorio-newman.html
+          if-no-files-found: warn
+
+      - name: Derrubar o crAPI
+        if: always()
+        run: docker compose -f docker-compose.yml down -v
