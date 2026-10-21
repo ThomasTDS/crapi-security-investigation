@@ -10,6 +10,8 @@ Uma subpasta por vulnerabilidade, com os prints das respostas que comprovam cada
 | `04-mass-assignment/` | Mass Assignment |
 | `05-ssrf/` | SSRF |
 | `06-bfla/` | BFLA |
+| `07-jwt-forgery/` | Forja de JWT (assinatura não verificada) |
+| `08-shell-injection/` | Shell Injection (Mass Assignment + SSRF) |
 
 Convenção de nome dos arquivos: `NN-descricao.png` (ex.: `01-resposta-200-veiculo-vitima.png`).
 

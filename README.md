@@ -18,8 +18,10 @@ O objetivo é demonstrar, de ponta a ponta, o processo de encontrar, explorar de
 | 4 | **API3 — Mass Assignment** | Obter reembolso de um item nunca devolvido | [docs](docs/vulnerabilidades/04-mass-assignment.md) |
 | 5 | **API7 — Server-Side Request Forgery (SSRF)** | Forçar o servidor a fazer requisições a um destino arbitrário | [docs](docs/vulnerabilidades/05-ssrf.md) |
 | 6 | **API5 — Broken Function Level Authorization (BFLA)** | Usuário comum acessando função administrativa | [docs](docs/vulnerabilidades/06-bfla.md) |
+| 7 | **API2 — Broken Authentication (forja de JWT)** | Assinatura do JWT não verificada → virar admin / personificar usuários | [docs](docs/vulnerabilidades/07-jwt-forgery.md) |
+| 8 | **Cadeia API3 + API7 → Shell Injection** | Mass Assignment + SSRF alcançam injeção de comando no backend | [docs](docs/vulnerabilidades/08-shell-injection.md) |
 
-Cada documento segue o mesmo formato: classificação OWASP, pré-condições, passo a passo da requisição, evidência, impacto/risco e recomendação de correção. **As 6 vulnerabilidades foram reproduzidas e confirmadas** contra uma instância local do crAPI; as respostas reais estão em [evidencias/](evidencias/) e podem ser regeradas com [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh).
+Cada documento segue o mesmo formato: classificação OWASP, pré-condições, passo a passo da requisição, evidência, impacto/risco e recomendação de correção. **As 8 vulnerabilidades foram reproduzidas e confirmadas** contra uma instância local do crAPI; as respostas reais estão em [evidencias/](evidencias/) e podem ser regeradas com [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh) (as 6 primeiras) e [`scripts/capturar-extras.py`](scripts/capturar-extras.py) (JWT e shell injection). O item 8 é um bom exemplo de **encadeamento**: duas falhas de severidade média se combinam em um impacto crítico (RCE).
 
 ---
 
@@ -35,7 +37,8 @@ Cada documento segue o mesmo formato: classificação OWASP, pré-condições, p
 │   ├── crAPI-security.postman_collection.json   # requisições de cada ataque
 │   └── crAPI.postman_environment.json           # variáveis de ambiente
 ├── scripts/
-│   └── capturar-evidencias.sh        # executa todos os ataques e salva as respostas reais
+│   ├── capturar-evidencias.sh        # executa os 6 primeiros ataques e salva as respostas
+│   └── capturar-extras.py            # captura os extras (forja de JWT e shell injection)
 ├── evidencias/                       # evidências das respostas (uma pasta por vulnerabilidade)
 ├── .zap/
 │   └── rules.tsv                     # ajuste fino de alertas do OWASP ZAP

