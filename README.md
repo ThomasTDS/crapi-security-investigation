@@ -34,12 +34,16 @@ Cada documento segue o mesmo formato: classificação OWASP, pré-condições, p
 │   ├── template-vulnerabilidade.md   # modelo usado para documentar cada falha
 │   └── vulnerabilidades/             # uma análise por vulnerabilidade
 ├── postman/
-│   ├── crAPI-security.postman_collection.json   # requisições de cada ataque
-│   └── crAPI.postman_environment.json           # variáveis de ambiente
+│   ├── crAPI-security.postman_collection.json     # requisições de cada ataque (catálogo)
+│   ├── crAPI-evidencias.postman_collection.json   # coleção auto-suficiente p/ rodar no Newman
+│   ├── crAPI.postman_environment.json             # variáveis de ambiente
+│   └── amostra.mp4                                 # arquivo usado nos uploads de vídeo
 ├── scripts/
-│   ├── capturar-evidencias.sh        # executa os 6 primeiros ataques e salva as respostas
-│   └── capturar-extras.py            # captura os extras (forja de JWT e shell injection)
-├── evidencias/                       # evidências das respostas (uma pasta por vulnerabilidade)
+│   ├── capturar-evidencias.sh         # executa os 6 primeiros ataques e salva as respostas
+│   ├── capturar-extras.py             # captura os extras (forja de JWT e shell injection)
+│   └── gerar-relatorio-newman.sh      # gera o relatório HTML de evidências (Newman)
+├── evidencias/                        # evidências das respostas (uma pasta por vulnerabilidade)
+│   └── relatorio-newman.html          # relatório HTML navegável com todas as requisições
 ├── .zap/
 │   └── rules.tsv                     # ajuste fino de alertas do OWASP ZAP
 └── .github/workflows/
@@ -72,6 +76,16 @@ EMAIL_VITIMA=vitima@teste.local SENHA_VITIMA='...' \
 EMAIL_ATACANTE=atacante@teste.local SENHA_ATACANTE='...' \
 bash scripts/capturar-evidencias.sh
 ```
+
+### Relatório HTML (Newman)
+
+Há também um relatório HTML navegável, com um print de cada requisição e sua resposta real, em [evidencias/relatorio-newman.html](evidencias/relatorio-newman.html) (baixe e abra no navegador). Ele é gerado rodando a coleção de evidências via Newman:
+
+```bash
+bash scripts/gerar-relatorio-newman.sh
+```
+
+O script mascara o token JWT real no HTML ao final, então o arquivo é seguro para versionar.
 
 ---
 
