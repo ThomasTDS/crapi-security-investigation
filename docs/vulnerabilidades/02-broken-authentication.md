@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/02-broken-authentication.md)
+
 # Broken Authentication — Redefinição de senha via brute-force de OTP
 
 **Categoria OWASP API Security Top 10 (2023):** `API2 — Broken Authentication`

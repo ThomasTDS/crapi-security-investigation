@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/06-bfla.md)
+
 # BFLA — Usuário comum acessando função administrativa
 
 **Categoria OWASP API Security Top 10 (2023):** `API5 — Broken Function Level Authorization`

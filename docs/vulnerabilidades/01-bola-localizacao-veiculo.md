@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/01-bola-vehicle-location.md)
+
 # BOLA — Acesso à localização do veículo de outro usuário
 
 **Categoria OWASP API Security Top 10 (2023):** `API1 — Broken Object Level Authorization`

@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](en/environment-crapi.md)
+
 # Ambiente — subindo o crAPI localmente
 
 O crAPI é distribuído como um conjunto de contêineres orquestrados por **Docker Compose**. Esta página descreve como colocar o ambiente no ar e como validar que ele está pronto para os testes.

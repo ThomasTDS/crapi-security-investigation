@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/08-shell-injection.md)
+
 # Shell Injection — encadeando Mass Assignment + SSRF
 
 **Categoria OWASP API Security Top 10 (2023):** cadeia de `API3 — Mass Assignment` + `API7 — SSRF`, levando a injeção de comando

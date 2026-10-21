@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](en/vulnerability-template.md)
+
 # Template — documentação de vulnerabilidade
 
 Modelo seguido por todos os documentos em [vulnerabilidades/](vulnerabilidades/). Copie este arquivo ao documentar uma nova falha.

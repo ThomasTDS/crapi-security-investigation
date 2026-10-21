@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/07-jwt-forgery.md)
+
 # Broken Authentication — Forja de JWT (assinatura não verificada)
 
 **Categoria OWASP API Security Top 10 (2023):** `API2 — Broken Authentication`
