@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/03-excessive-data-exposure.md)
+
 # Excessive Data Exposure — Endpoint que vaza dados de outros usuários
 
 **Categoria OWASP API Security Top 10 (2023):** `API3 — Broken Object Property Level Authorization (Excessive Data Exposure)`

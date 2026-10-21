@@ -14,18 +14,18 @@ The goal is to demonstrate, end to end, the process of finding, safely exploitin
 
 | # | Category (OWASP API Security Top 10 — 2023) | crAPI scenario | Docs |
 |---|---|---|---|
-| 1 | **API1 — Broken Object Level Authorization (BOLA)** | Access another user's vehicle location | [docs](docs/vulnerabilidades/01-bola-localizacao-veiculo.md) |
-| 2 | **API2 — Broken Authentication** | Reset another user's password via OTP brute-force | [docs](docs/vulnerabilidades/02-broken-authentication.md) |
-| 3 | **API3 — Excessive Data Exposure** | Endpoint leaking other users' sensitive data | [docs](docs/vulnerabilidades/03-excessive-data-exposure.md) |
-| 4 | **API3 — Mass Assignment** | Get refunded for an item never returned | [docs](docs/vulnerabilidades/04-mass-assignment.md) |
-| 5 | **API7 — Server-Side Request Forgery (SSRF)** | Force the server to call an arbitrary destination | [docs](docs/vulnerabilidades/05-ssrf.md) |
-| 6 | **API5 — Broken Function Level Authorization (BFLA)** | Regular user reaching an admin function | [docs](docs/vulnerabilidades/06-bfla.md) |
-| 7 | **API2 — Broken Authentication (JWT forgery)** | JWT signature not verified → become admin / impersonate users | [docs](docs/vulnerabilidades/07-jwt-forgery.md) |
-| 8 | **Chain API3 + API7 → Shell Injection** | Mass Assignment + SSRF reach command injection on the backend | [docs](docs/vulnerabilidades/08-shell-injection.md) |
+| 1 | **API1 — Broken Object Level Authorization (BOLA)** | Access another user's vehicle location | [docs](docs/en/vulnerabilities/01-bola-vehicle-location.md) |
+| 2 | **API2 — Broken Authentication** | Reset another user's password via OTP brute-force | [docs](docs/en/vulnerabilities/02-broken-authentication.md) |
+| 3 | **API3 — Excessive Data Exposure** | Endpoint leaking other users' sensitive data | [docs](docs/en/vulnerabilities/03-excessive-data-exposure.md) |
+| 4 | **API3 — Mass Assignment** | Get refunded for an item never returned | [docs](docs/en/vulnerabilities/04-mass-assignment.md) |
+| 5 | **API7 — Server-Side Request Forgery (SSRF)** | Force the server to call an arbitrary destination | [docs](docs/en/vulnerabilities/05-ssrf.md) |
+| 6 | **API5 — Broken Function Level Authorization (BFLA)** | Regular user reaching an admin function | [docs](docs/en/vulnerabilities/06-bfla.md) |
+| 7 | **API2 — Broken Authentication (JWT forgery)** | JWT signature not verified → become admin / impersonate users | [docs](docs/en/vulnerabilities/07-jwt-forgery.md) |
+| 8 | **Chain API3 + API7 → Shell Injection** | Mass Assignment + SSRF reach command injection on the backend | [docs](docs/en/vulnerabilities/08-shell-injection.md) |
 
 Each document follows the same format: OWASP classification, preconditions, step-by-step request, evidence, impact/risk, and remediation. **All 8 vulnerabilities were reproduced and confirmed** against a local crAPI instance; the real responses live in [evidencias/](evidencias/) and can be regenerated with [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh) (the first 6) and [`scripts/capturar-extras.py`](scripts/capturar-extras.py) (JWT and shell injection). Item 8 is a good example of **chaining**: two medium-severity flaws combine into a critical impact (RCE).
 
-> The per-vulnerability documents (`docs/`) are written in Portuguese.
+> English documentation lives in [docs/en/](docs/en/); the Portuguese originals are under [docs/](docs/).
 
 ---
 
@@ -33,10 +33,11 @@ Each document follows the same format: OWASP classification, preconditions, step
 
 ```
 .
-├── docs/
+├── docs/                             # Portuguese documentation
 │   ├── 00-ambiente-crapi.md          # how to run crAPI locally (Docker)
 │   ├── template-vulnerabilidade.md   # template used to document each flaw
-│   └── vulnerabilidades/             # one analysis per vulnerability
+│   ├── vulnerabilidades/             # one analysis per vulnerability (PT)
+│   └── en/                           # English documentation (mirror)
 ├── postman/
 │   ├── crAPI-security.postman_collection.json     # request for each attack (catalog)
 │   ├── crAPI-evidencias.postman_collection.json   # self-contained collection to run in Newman
@@ -61,16 +62,16 @@ Each document follows the same format: OWASP classification, preconditions, step
 - **Docker** and **Docker Compose** (to run crAPI locally)
 - **Postman** (or Newman, to run the collection from the command line)
 
-Full environment instructions in [docs/00-ambiente-crapi.md](docs/00-ambiente-crapi.md).
+Full environment instructions in [docs/en/environment-crapi.md](docs/en/environment-crapi.md).
 
 ---
 
 ## How to use
 
-1. Bring crAPI up locally following [docs/00-ambiente-crapi.md](docs/00-ambiente-crapi.md).
+1. Bring crAPI up locally following [docs/en/environment-crapi.md](docs/en/environment-crapi.md).
 2. Import the collection and the environment from [postman/](postman/) into Postman.
 3. Set the environment's `base_url` variable to your crAPI address (defaults to `http://localhost:8888`).
-4. Follow each document in [docs/vulnerabilidades/](docs/vulnerabilidades/) to reproduce and understand each flaw.
+4. Follow each document in [docs/en/vulnerabilities/](docs/en/vulnerabilities/) to reproduce and understand each flaw.
 
 To reproduce all attacks at once and regenerate the evidence:
 

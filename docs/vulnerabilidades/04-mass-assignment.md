@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/04-mass-assignment.md)
+
 # Mass Assignment — Reembolso de um item nunca devolvido
 
 **Categoria OWASP API Security Top 10 (2023):** `API3 — Broken Object Property Level Authorization (Mass Assignment)`

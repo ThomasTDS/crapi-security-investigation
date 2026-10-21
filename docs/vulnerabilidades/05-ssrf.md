@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](../en/vulnerabilities/05-ssrf.md)
+
 # SSRF — Forçar o servidor a requisitar um destino arbitrário
 
 **Categoria OWASP API Security Top 10 (2023):** `API7 — Server-Side Request Forgery`
