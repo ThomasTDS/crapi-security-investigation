@@ -1,3 +1,5 @@
+🇧🇷 Português · [🇺🇸 English](README.en.md)
+
 # crAPI — Investigação de Segurança de API (OWASP API Security Top 10)
 
 Projeto de **testes de segurança de API** sobre o [crAPI (Completely Ridiculous API)](https://owasp.org/www-project-crapi/), uma aplicação intencionalmente vulnerável mantida pela OWASP e criada justamente para treinar a identificação de falhas do **OWASP API Security Top 10**.
