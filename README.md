@@ -2,6 +2,10 @@
 
 # crAPI — Investigação de Segurança de API (OWASP API Security Top 10)
 
+[![ZAP Baseline](https://github.com/ThomasTDS/crapi-security-investigation/actions/workflows/zap-baseline.yml/badge.svg)](https://github.com/ThomasTDS/crapi-security-investigation/actions/workflows/zap-baseline.yml)
+[![OWASP API Security Top 10](https://img.shields.io/badge/OWASP-API%20Security%20Top%2010-000000)](https://owasp.org/API-Security/editions/2023/en/0x00-header/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Projeto de **testes de segurança de API** sobre o [crAPI (Completely Ridiculous API)](https://owasp.org/www-project-crapi/), uma aplicação intencionalmente vulnerável mantida pela OWASP e criada justamente para treinar a identificação de falhas do **OWASP API Security Top 10**.
 
 O objetivo é demonstrar, de ponta a ponta, o processo de encontrar, explorar de forma controlada e **documentar** vulnerabilidades reais de API: a requisição que expõe o problema, a evidência da exploração e a explicação do risco de negócio — além de um scan automatizado de segurança (OWASP ZAP) integrado a uma pipeline de CI.
@@ -104,3 +108,9 @@ Por rodar contra uma instância local do crAPI, o scan é disparado **manualment
 - [OWASP crAPI](https://owasp.org/www-project-crapi/)
 - [OWASP API Security Top 10 (2023)](https://owasp.org/API-Security/editions/2023/en/0x00-header/)
 - [OWASP ZAP](https://www.zaproxy.org/)
+
+---
+
+## Licença
+
+Distribuído sob a licença MIT. Veja [LICENSE](LICENSE).
