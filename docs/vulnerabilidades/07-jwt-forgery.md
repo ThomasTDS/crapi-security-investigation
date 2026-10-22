@@ -3,7 +3,7 @@
 # Broken Authentication — Forja de JWT (assinatura não verificada)
 
 **Categoria OWASP API Security Top 10 (2023):** `API2 — Broken Authentication`
-**Severidade estimada:** `Crítica`
+**Severidade (CVSS v3.1):** `Crítica · 9.8` — `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`
 **Desafio crAPI correspondente:** Challenge 15 — "forge valid JWTs"
 
 ---

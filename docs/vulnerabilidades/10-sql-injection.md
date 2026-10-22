@@ -3,7 +3,7 @@
 # SQL Injection — `coupon_code` em query SQL sem sanitização
 
 **Categoria OWASP API Security Top 10 (2023):** Injeção — não é uma categoria isolada no Top 10 de 2023 (era `API8:2019 — Injection`); hoje se enquadra como entrada não validada / falha de implementação.
-**Severidade estimada:** `Crítica`
+**Severidade (CVSS v3.1):** `Alta · 8.8` — `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H`
 **Desafio crAPI correspondente:** Challenge 13 — "redeem a coupon that was already claimed" (SQL injection)
 
 ---

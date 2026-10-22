@@ -3,7 +3,7 @@
 # Excessive Data Exposure — Endpoint que vaza dados de outros usuários
 
 **Categoria OWASP API Security Top 10 (2023):** `API3 — Broken Object Property Level Authorization (Excessive Data Exposure)`
-**Severidade estimada:** `Alta`
+**Severidade (CVSS v3.1):** `Média · 6.5` — `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N`
 **Desafio crAPI correspondente:** Challenge 4 — "find an endpoint that leaks sensitive information of other users"
 
 ---

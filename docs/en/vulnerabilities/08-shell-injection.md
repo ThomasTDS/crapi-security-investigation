@@ -3,7 +3,7 @@
 # Shell Injection — chaining Mass Assignment + SSRF
 
 **OWASP API Security Top 10 (2023) category:** chain of `API3 — Mass Assignment` + `API7 — SSRF`, leading to command injection
-**Estimated severity:** `Critical` (potential RCE)
+**Severity (CVSS v3.1):** `High · 8.5` (potential RCE) — `CVSS:3.1/AV:N/AC:H/PR:L/UI:N/S:C/C:H/I:H/A:H`
 **Matching crAPI challenge:** "shell injection" challenge (hidden) + Challenge 10 (internal video property)
 
 ---

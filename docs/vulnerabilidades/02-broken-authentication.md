@@ -3,7 +3,7 @@
 # Broken Authentication — Redefinição de senha via brute-force de OTP
 
 **Categoria OWASP API Security Top 10 (2023):** `API2 — Broken Authentication`
-**Severidade estimada:** `Crítica`
+**Severidade (CVSS v3.1):** `Crítica · 9.1` — `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`
 **Desafio crAPI correspondente:** Challenge 3 — "reset the password of a different user"
 
 ---

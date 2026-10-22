@@ -9,7 +9,7 @@ Modelo seguido por todos os documentos em [vulnerabilidades/](vulnerabilidades/)
 ## <Nome da vulnerabilidade>
 
 **Categoria OWASP API Security Top 10 (2023):** `APIx — <nome da categoria>`
-**Severidade estimada:** `Crítica | Alta | Média | Baixa`
+**Severidade (CVSS v3.1):** `<Crítica | Alta | Média | Baixa> · <score>` — `CVSS:3.1/AV:_/AC:_/PR:_/UI:_/S:_/C:_/I:_/A:_`
 **Desafio crAPI correspondente:** `<número/descrição do desafio oficial>`
 
 ### 1. Resumo

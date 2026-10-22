@@ -15,45 +15,50 @@
 
 **10 vulnerabilities were confirmed**, all reproduced against the local instance, with the request, real evidence, and remediation documented. The results show flaws in **authorization** (BOLA, BFLA), **authentication** (OTP brute-force, JWT forgery), **data exposure and manipulation** (excessive data exposure, mass assignment), **server requests** (SSRF), and **injection** (NoSQL, SQL) — plus a **chain** that leads to command execution (RCE).
 
+Severity by **CVSS v3.1** band (base score):
+
 | Severity | Count | Items |
 |---|---|---|
-| 🔴 Critical | 5 | Broken Authentication (OTP), SSRF, JWT forgery, Shell Injection (chain), SQL Injection |
-| 🟠 High | 5 | BOLA, Excessive Data Exposure, Mass Assignment, BFLA, NoSQL Injection |
+| 🔴 Critical (9.0–10.0) | 2 | JWT forgery (9.8) · Broken Authentication/OTP (9.1) |
+| 🟠 High (7.0–8.9) | 4 | SQL Injection (8.8) · SSRF (8.5) · Shell Injection (8.5) · BFLA (7.1) |
+| 🟡 Medium (4.0–6.9) | 4 | BOLA (6.5) · Excessive Data Exposure (6.5) · Mass Assignment (6.5) · NoSQL Injection (5.4) |
 | **Total** | **10** | |
 
-**Highlight:** the **Shell Injection** item is not an isolated flaw — it is the chaining of **Mass Assignment + SSRF** to reach an internal command-injection point. It is the clearest example of how medium-severity vulnerabilities, combined, produce a critical impact.
+**Highlight:** the **Shell Injection** item is not an isolated flaw — it is the chaining of **Mass Assignment + SSRF** to reach an internal command-injection point. Its CVSS is **8.5 (High)**: the impact is maximal (RCE, high C/I/A, changed scope), but the higher **attack complexity** (`AC:H`, since it requires the chain) keeps it below 9.0. It is the clearest example of how medium-severity flaws, combined, produce a severe impact.
 
 ---
 
 ## 2. Findings table
 
-| # | Vulnerability | OWASP API Top 10 (2023) category | Severity | Status | Detail |
+All 10 were **confirmed** against the local instance. Ordered by descending CVSS:
+
+| # | Vulnerability | OWASP API Top 10 (2023) category | CVSS v3.1 | Severity | Detail |
 |---|---|---|---|---|---|
-| 1 | BOLA — vehicle location | API1 — Broken Object Level Authorization | 🟠 High | Confirmed | [doc](vulnerabilities/01-bola-vehicle-location.md) |
-| 2 | Broken Authentication — OTP brute-force | API2 — Broken Authentication | 🔴 Critical | Confirmed | [doc](vulnerabilities/02-broken-authentication.md) |
-| 3 | Excessive Data Exposure | API3 — Broken Object Property Level Authorization | 🟠 High | Confirmed | [doc](vulnerabilities/03-excessive-data-exposure.md) |
-| 4 | Mass Assignment | API3 — Broken Object Property Level Authorization | 🟠 High | Confirmed | [doc](vulnerabilities/04-mass-assignment.md) |
-| 5 | SSRF | API7 — Server-Side Request Forgery | 🔴 Critical | Confirmed | [doc](vulnerabilities/05-ssrf.md) |
-| 6 | BFLA — admin function by a regular user | API5 — Broken Function Level Authorization | 🟠 High | Confirmed | [doc](vulnerabilities/06-bfla.md) |
-| 7 | JWT forgery (signature not verified) | API2 — Broken Authentication | 🔴 Critical | Confirmed | [doc](vulnerabilities/07-jwt-forgery.md) |
-| 8 | Shell Injection (Mass Assignment + SSRF) | Chain API3 + API7 → command injection | 🔴 Critical | Confirmed | [doc](vulnerabilities/08-shell-injection.md) |
-| 9 | NoSQL Injection — coupon without code | Injection (was API8:2019) | 🟠 High | Confirmed | [doc](vulnerabilities/09-nosql-injection.md) |
-| 10 | SQL Injection — apply_coupon | Injection (was API8:2019) | 🔴 Critical | Confirmed | [doc](vulnerabilities/10-sql-injection.md) |
+| 7 | JWT forgery (signature not verified) | API2 — Broken Authentication | 9.8 | 🔴 Critical | [doc](vulnerabilities/07-jwt-forgery.md) |
+| 2 | Broken Authentication — OTP brute-force | API2 — Broken Authentication | 9.1 | 🔴 Critical | [doc](vulnerabilities/02-broken-authentication.md) |
+| 10 | SQL Injection — apply_coupon | Injection (was API8:2019) | 8.8 | 🟠 High | [doc](vulnerabilities/10-sql-injection.md) |
+| 5 | SSRF | API7 — Server-Side Request Forgery | 8.5 | 🟠 High | [doc](vulnerabilities/05-ssrf.md) |
+| 8 | Shell Injection (Mass Assignment + SSRF) | Chain API3 + API7 → command injection | 8.5 | 🟠 High | [doc](vulnerabilities/08-shell-injection.md) |
+| 6 | BFLA — admin function by a regular user | API5 — Broken Function Level Authorization | 7.1 | 🟠 High | [doc](vulnerabilities/06-bfla.md) |
+| 1 | BOLA — vehicle location | API1 — Broken Object Level Authorization | 6.5 | 🟡 Medium | [doc](vulnerabilities/01-bola-vehicle-location.md) |
+| 3 | Excessive Data Exposure | API3 — Broken Object Property Level Authorization | 6.5 | 🟡 Medium | [doc](vulnerabilities/03-excessive-data-exposure.md) |
+| 4 | Mass Assignment | API3 — Broken Object Property Level Authorization | 6.5 | 🟡 Medium | [doc](vulnerabilities/04-mass-assignment.md) |
+| 9 | NoSQL Injection — coupon without code | Injection (was API8:2019) | 5.4 | 🟡 Medium | [doc](vulnerabilities/09-nosql-injection.md) |
 
 ---
 
 ## 3. Findings in detail (summary)
 
-1. **BOLA — vehicle location** 🟠 — With their own token, the attacker reads another user's vehicle GPS location (ID obtained via item 3). No object-ownership check. → *physical tracking of any user.*
+1. **BOLA — vehicle location** 🟡 — With their own token, the attacker reads another user's vehicle GPS location (ID obtained via item 3). No object-ownership check. → *physical tracking of any user.*
 2. **Broken Authentication — OTP** 🔴 — `check-otp` has no rate limit and the OTP is 4 digits (10,000 combinations); brute-force leads to **account takeover** without access to the victim's email. → *account takeover.*
-3. **Excessive Data Exposure** 🟠 — The community posts endpoint leaks every user's `email` and `vehicleid`. Feeds items 1 and 2. → *PII leak + springboard.*
-4. **Mass Assignment** 🟠 — The client writes an order's `status` field and gets refunded without returning anything. → *financial fraud.*
-5. **SSRF** 🔴 — `contact_mechanic` makes the server request an arbitrary URL; pointed at an internal service, it returned its content. → *internal network access.*
+3. **Excessive Data Exposure** 🟡 — The community posts endpoint leaks every user's `email` and `vehicleid`. Feeds items 1 and 2. → *PII leak + springboard.*
+4. **Mass Assignment** 🟡 — The client writes an order's `status` field and gets refunded without returning anything. → *financial fraud.*
+5. **SSRF** 🟠 — `contact_mechanic` makes the server request an arbitrary URL; pointed at an internal service, it returned its content. → *internal network access.*
 6. **BFLA** 🟠 — A regular user calls an admin endpoint and deletes another user's video. → *privileged operations by anyone.*
 7. **JWT forgery** 🔴 — The server does not verify the signature (accepts `alg:none` and tampered payloads); allows becoming admin and impersonating any user. → *full authentication bypass.*
-8. **Shell Injection (chain)** 🔴 — Mass Assignment writes a command into `conversion_params`; SSRF reaches the internal `convert_video`; the injection sink is hit. → *potential RCE.*
-9. **NoSQL Injection** 🟠 — A MongoDB operator in `coupon_code` returns a valid coupon without knowing the code. → *fraud + query manipulation.*
-10. **SQL Injection** 🔴 — `coupon_code` flows raw into SQL (error-based and boolean-based confirmed). → *read/alter database data.*
+8. **Shell Injection (chain)** 🟠 — Mass Assignment writes a command into `conversion_params`; SSRF reaches the internal `convert_video`; the injection sink is hit. → *potential RCE.*
+9. **NoSQL Injection** 🟡 — A MongoDB operator in `coupon_code` returns a valid coupon without knowing the code. → *fraud + query manipulation.*
+10. **SQL Injection** 🟠 — `coupon_code` flows raw into SQL (error-based and boolean-based confirmed). → *read/alter database data.*
 
 ---
 

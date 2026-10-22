@@ -3,7 +3,7 @@
 # BOLA — Acesso à localização do veículo de outro usuário
 
 **Categoria OWASP API Security Top 10 (2023):** `API1 — Broken Object Level Authorization`
-**Severidade estimada:** `Alta`
+**Severidade (CVSS v3.1):** `Média · 6.5` — `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N`
 **Desafio crAPI correspondente:** BOLA / Challenge 1 — "access details of another user's vehicle"
 
 ---
