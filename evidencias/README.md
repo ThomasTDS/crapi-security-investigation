@@ -14,6 +14,8 @@ Uma subpasta por vulnerabilidade, com os prints das respostas que comprovam cada
 | `08-shell-injection/` | Shell Injection (Mass Assignment + SSRF) |
 | `09-nosql-injection/` | NoSQL Injection (cupom sem código) |
 | `10-sql-injection/` | SQL Injection (apply_coupon) |
+| `11-unauth-access/` | Acesso não autenticado (endpoints de relatório) |
+| `12-path-traversal/` | Path Traversal / LFI (download_report) |
 
 Convenção de nome dos arquivos: `NN-descricao.png` (ex.: `01-resposta-200-veiculo-vitima.png`).
 

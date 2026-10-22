@@ -32,8 +32,10 @@ The goal is to demonstrate, end to end, the process of finding, safely exploitin
 | 8 | **Chain API3 + API7 → Shell Injection** | Mass Assignment + SSRF reach command injection on the backend | [docs](docs/en/vulnerabilities/08-shell-injection.md) |
 | 9 | **Injection — NoSQL Injection** | Get a valid coupon without knowing the code (MongoDB operator) | [docs](docs/en/vulnerabilities/09-nosql-injection.md) |
 | 10 | **Injection — SQL Injection** | `coupon_code` concatenated into a SQL query without sanitization | [docs](docs/en/vulnerabilities/10-sql-injection.md) |
+| 11 | **API2 — Unauthenticated access** | Report endpoints with no JWT token check | [docs](docs/en/vulnerabilities/11-unauth-access.md) |
+| 12 | **Path Traversal / LFI** | Unauthenticated arbitrary file read via double-encoding | [docs](docs/en/vulnerabilities/12-path-traversal.md) |
 
-Each document follows the same format: OWASP classification, preconditions, step-by-step request, evidence, impact/risk, and remediation. **All 10 vulnerabilities were reproduced and confirmed** against a local crAPI instance; the real responses live in [evidencias/](evidencias/) and can be regenerated with [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh) (the first 6), [`scripts/capturar-extras.py`](scripts/capturar-extras.py) (JWT and shell injection), and [`scripts/capturar-cupons.py`](scripts/capturar-cupons.py) (NoSQL/SQL injection). Item 8 is a good example of **chaining**: two medium-severity flaws combine into a critical impact (RCE).
+Each document follows the same format: OWASP classification, preconditions, step-by-step request, evidence, impact/risk, and remediation. **All 12 vulnerabilities were reproduced and confirmed** against a local crAPI instance; the real responses live in [evidencias/](evidencias/) and can be regenerated with [`scripts/capturar-evidencias.sh`](scripts/capturar-evidencias.sh) (the first 6), [`scripts/capturar-extras.py`](scripts/capturar-extras.py) (JWT and shell injection), [`scripts/capturar-cupons.py`](scripts/capturar-cupons.py) (NoSQL/SQL injection), and [`scripts/capturar-unauth-lfi.py`](scripts/capturar-unauth-lfi.py) (unauthenticated access and path traversal). Item 8 is a good example of **chaining**: two medium-severity flaws combine into a critical impact (RCE).
 
 > English documentation lives in [docs/en/](docs/en/); the Portuguese originals are under [docs/](docs/).
 
@@ -57,6 +59,7 @@ Each document follows the same format: OWASP classification, preconditions, step
 │   ├── capturar-evidencias.sh         # runs the first 6 attacks and saves the responses
 │   ├── capturar-extras.py             # captures the extras (JWT forgery and shell injection)
 │   ├── capturar-cupons.py             # captures the coupon injections (NoSQL/SQL)
+│   ├── capturar-unauth-lfi.py         # captures the unauthenticated access and path traversal
 │   └── gerar-relatorio-newman.sh      # generates the HTML evidence report (Newman)
 ├── evidencias/                        # response evidence (one folder per vulnerability)
 │   └── relatorio-newman.html          # browsable HTML report with every request

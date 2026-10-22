@@ -1,0 +1,13 @@
+# Acesso nao autenticado — endpoints de relatorio do mecanico
+# Causa: views sem o decorator @jwt_auth_required no servico workshop.
+----------------------------------------------------------------
+# receive_report SEM token -> HTTP 500  HTML Server Error (500)
+#   (processa a requisicao sem exigir token; nao retorna 401 — criaria um
+#    service request com um VIN valido)
+# download_report SEM token -> HTTP 404  {"message":"File not found at '/app/reports/teste'."}
+#   (acessivel sem token e vaza o caminho absoluto do servidor)
+# Contraste — endpoint que EXIGE auth, sem token:
+#   GET /workshop/api/shop/products -> HTTP 401  {"message":"JWT Token required!"}
+----------------------------------------------------------------
+# Prova: os endpoints de relatorio respondem sem token (nenhum 401),
+# enquanto um endpoint corretamente protegido devolve 401.

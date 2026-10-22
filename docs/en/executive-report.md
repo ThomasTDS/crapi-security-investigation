@@ -13,16 +13,16 @@
 
 ## 1. Executive summary
 
-**10 vulnerabilities were confirmed**, all reproduced against the local instance, with the request, real evidence, and remediation documented. The results show flaws in **authorization** (BOLA, BFLA), **authentication** (OTP brute-force, JWT forgery), **data exposure and manipulation** (excessive data exposure, mass assignment), **server requests** (SSRF), and **injection** (NoSQL, SQL) — plus a **chain** that leads to command execution (RCE).
+**12 vulnerabilities were confirmed**, all reproduced against the local instance, with the request, real evidence, and remediation documented. The results show flaws in **authorization** (BOLA, BFLA), **authentication** (OTP brute-force, JWT forgery, unauthenticated endpoints), **data exposure and manipulation** (excessive data exposure, mass assignment), **server requests** (SSRF), **injection** (NoSQL, SQL), and **arbitrary file read** (path traversal) — plus a **chain** that leads to command execution (RCE).
 
 Severity by **CVSS v3.1** band (base score):
 
 | Severity | Count | Items |
 |---|---|---|
 | 🔴 Critical (9.0–10.0) | 2 | JWT forgery (9.8) · Broken Authentication/OTP (9.1) |
-| 🟠 High (7.0–8.9) | 4 | SQL Injection (8.8) · SSRF (8.5) · Shell Injection (8.5) · BFLA (7.1) |
-| 🟡 Medium (4.0–6.9) | 4 | BOLA (6.5) · Excessive Data Exposure (6.5) · Mass Assignment (6.5) · NoSQL Injection (5.4) |
-| **Total** | **10** | |
+| 🟠 High (7.0–8.9) | 5 | SQL Injection (8.8) · SSRF (8.5) · Shell Injection (8.5) · Path Traversal/LFI (7.5) · BFLA (7.1) |
+| 🟡 Medium (4.0–6.9) | 5 | BOLA (6.5) · Excessive Data Exposure (6.5) · Mass Assignment (6.5) · Unauthenticated access (6.5) · NoSQL Injection (5.4) |
+| **Total** | **12** | |
 
 **Highlight:** the **Shell Injection** item is not an isolated flaw — it is the chaining of **Mass Assignment + SSRF** to reach an internal command-injection point. Its CVSS is **8.5 (High)**: the impact is maximal (RCE, high C/I/A, changed scope), but the higher **attack complexity** (`AC:H`, since it requires the chain) keeps it below 9.0. It is the clearest example of how medium-severity flaws, combined, produce a severe impact.
 
@@ -39,10 +39,12 @@ All 10 were **confirmed** against the local instance. Ordered by descending CVSS
 | 10 | SQL Injection — apply_coupon | Injection (was API8:2019) | 8.8 | 🟠 High | [doc](vulnerabilities/10-sql-injection.md) |
 | 5 | SSRF | API7 — Server-Side Request Forgery | 8.5 | 🟠 High | [doc](vulnerabilities/05-ssrf.md) |
 | 8 | Shell Injection (Mass Assignment + SSRF) | Chain API3 + API7 → command injection | 8.5 | 🟠 High | [doc](vulnerabilities/08-shell-injection.md) |
+| 12 | Path Traversal / LFI — download_report | Path Traversal (rel. API8) | 7.5 | 🟠 High | [doc](vulnerabilities/12-path-traversal.md) |
 | 6 | BFLA — admin function by a regular user | API5 — Broken Function Level Authorization | 7.1 | 🟠 High | [doc](vulnerabilities/06-bfla.md) |
 | 1 | BOLA — vehicle location | API1 — Broken Object Level Authorization | 6.5 | 🟡 Medium | [doc](vulnerabilities/01-bola-vehicle-location.md) |
 | 3 | Excessive Data Exposure | API3 — Broken Object Property Level Authorization | 6.5 | 🟡 Medium | [doc](vulnerabilities/03-excessive-data-exposure.md) |
 | 4 | Mass Assignment | API3 — Broken Object Property Level Authorization | 6.5 | 🟡 Medium | [doc](vulnerabilities/04-mass-assignment.md) |
+| 11 | Unauthenticated access — report endpoints | API2 — Broken Authentication | 6.5 | 🟡 Medium | [doc](vulnerabilities/11-unauth-access.md) |
 | 9 | NoSQL Injection — coupon without code | Injection (was API8:2019) | 5.4 | 🟡 Medium | [doc](vulnerabilities/09-nosql-injection.md) |
 
 ---
@@ -59,6 +61,8 @@ All 10 were **confirmed** against the local instance. Ordered by descending CVSS
 8. **Shell Injection (chain)** 🟠 — Mass Assignment writes a command into `conversion_params`; SSRF reaches the internal `convert_video`; the injection sink is hit. → *potential RCE.*
 9. **NoSQL Injection** 🟡 — A MongoDB operator in `coupon_code` returns a valid coupon without knowing the code. → *fraud + query manipulation.*
 10. **SQL Injection** 🟠 — `coupon_code` flows raw into SQL (error-based and boolean-based confirmed). → *read/alter database data.*
+11. **Unauthenticated access** 🟡 — The mechanic report endpoints do not check the token (missing auth decorator); they respond without `401` and leak the server's internal path. → *abuse with no credential + input for item 12.*
+12. **Path Traversal / LFI** 🟠 — `download_report` validates the filename before `unquote`; with double-encoding, it reads arbitrary files (`/etc/passwd`) without authentication. → *reading server secrets/source.*
 
 ---
 
