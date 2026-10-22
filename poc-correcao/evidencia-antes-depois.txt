@@ -1,0 +1,37 @@
+# PoC de correcao — SQL Injection em apply_coupon
+# Endpoint: POST /workshop/api/shop/apply_coupon  (servico workshop, Django/PostgreSQL)
+# Correcao: consulta parametrizada (bind) no lugar de concatenacao de string.
+# Ver o patch em apply-coupon-sqli.patch.
+
+================================================================
+ANTES (codigo vulneravel — concatenacao)
+================================================================
+# aspa simples quebra a query:
+POST /workshop/api/shop/apply_coupon  {"coupon_code":"TRAC075'","amount":75}
+-> HTTP 500 (Server Error)
+
+# OR injetado altera o WHERE: input "x'..." faz a resposta citar TRAC075:
+POST /workshop/api/shop/apply_coupon  {"coupon_code":"x' OR '1'='1","amount":75}
+-> HTTP 400  {"message":"TRAC075 Coupon code is already claimed by you!! ..."}
+
+================================================================
+DEPOIS (patch aplicado — consulta parametrizada)
+================================================================
+# aspa simples agora e tratada como valor literal (nenhum cupom com esse codigo):
+POST /workshop/api/shop/apply_coupon  {"coupon_code":"TRAC075'","amount":75}
+-> HTTP 400  {"message":"Coupon not found"}
+
+# injecao neutralizada (nao retorna mais TRAC075):
+POST /workshop/api/shop/apply_coupon  {"coupon_code":"x' OR '1'='1","amount":75}
+-> HTTP 400  {"message":"Coupon not found"}
+
+# fluxo legitimo continua funcionando (a query parametrizada ainda encontra o cupom real):
+POST /workshop/api/shop/apply_coupon  {"coupon_code":"TRAC075","amount":75}
+-> HTTP 400  {"message":"TRAC075 Coupon code is already claimed by you!! ..."}
+
+================================================================
+RESULTADO
+================================================================
+A consulta parametrizada eliminou os dois sinais de injecao (error-based 500 e
+boolean-based) sem quebrar a funcionalidade. A entrada do usuario passou a ser
+tratada como VALOR, nunca como fragmento de SQL.
