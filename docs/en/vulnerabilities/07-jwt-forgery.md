@@ -3,7 +3,7 @@
 # Broken Authentication — JWT forgery (signature not verified)
 
 **OWASP API Security Top 10 (2023) category:** `API2 — Broken Authentication`
-**Estimated severity:** `Critical`
+**Severity (CVSS v3.1):** `Critical · 9.8` — `CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H`
 **Matching crAPI challenge:** Challenge 15 — "forge valid JWTs"
 
 ---

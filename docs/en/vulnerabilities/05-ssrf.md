@@ -3,7 +3,7 @@
 # SSRF — Forcing the server to request an arbitrary destination
 
 **OWASP API Security Top 10 (2023) category:** `API7 — Server-Side Request Forgery`
-**Estimated severity:** `Critical`
+**Severity (CVSS v3.1):** `High · 8.5` — `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:C/C:H/I:L/A:N`
 **Matching crAPI challenge:** Challenge 11 — "make crAPI send an HTTP request to an external site and return the response"
 
 ---

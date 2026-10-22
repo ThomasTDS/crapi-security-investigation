@@ -3,7 +3,7 @@
 # BFLA — Usuário comum acessando função administrativa
 
 **Categoria OWASP API Security Top 10 (2023):** `API5 — Broken Function Level Authorization`
-**Severidade estimada:** `Alta`
+**Severidade (CVSS v3.1):** `Alta · 7.1` — `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:H/A:N`
 **Desafio crAPI correspondente:** Challenge 7 — "delete a video of another user" (via endpoint de admin)
 
 ---

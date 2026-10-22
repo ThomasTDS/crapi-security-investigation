@@ -3,7 +3,7 @@
 # NoSQL Injection — Free coupon without knowing the code
 
 **OWASP API Security Top 10 (2023) category:** Injection — not a standalone category in the 2023 Top 10 (it was `API8:2019 — Injection`); today it falls under unvalidated input / implementation flaw.
-**Estimated severity:** `High`
+**Severity (CVSS v3.1):** `Medium · 5.4` — `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:L/A:N`
 **Matching crAPI challenge:** Challenge 12 — "find a way to get coupons for free without the code"
 
 ---

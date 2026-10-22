@@ -3,7 +3,7 @@
 # Mass Assignment — Refund for an item never returned
 
 **OWASP API Security Top 10 (2023) category:** `API3 — Broken Object Property Level Authorization (Mass Assignment)`
-**Estimated severity:** `High`
+**Severity (CVSS v3.1):** `Medium · 6.5` — `CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:N/I:H/A:N`
 **Matching crAPI challenge:** Challenge 8 — "get an item for free" / Challenge 9 — "increase balance by $1,000+"
 
 ---
