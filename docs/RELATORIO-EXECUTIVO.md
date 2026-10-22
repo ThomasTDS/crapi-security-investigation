@@ -13,16 +13,16 @@
 
 ## 1. Sumário executivo
 
-Foram **confirmadas 10 vulnerabilidades**, todas reproduzidas contra a instância local, com requisição, evidência real e recomendação de correção documentadas. O resultado mostra falhas em **autorização** (BOLA, BFLA), **autenticação** (brute-force de OTP, forja de JWT), **exposição e manipulação de dados** (excessive data exposure, mass assignment), **requisições do servidor** (SSRF) e **injeção** (NoSQL, SQL) — além de um **encadeamento** que leva a execução de comando (RCE).
+Foram **confirmadas 12 vulnerabilidades**, todas reproduzidas contra a instância local, com requisição, evidência real e recomendação de correção documentadas. O resultado mostra falhas em **autorização** (BOLA, BFLA), **autenticação** (brute-force de OTP, forja de JWT, endpoints sem auth), **exposição e manipulação de dados** (excessive data exposure, mass assignment), **requisições do servidor** (SSRF), **injeção** (NoSQL, SQL) e **leitura arbitrária de arquivos** (path traversal) — além de um **encadeamento** que leva a execução de comando (RCE).
 
 Severidade pela faixa do **CVSS v3.1** (base score):
 
 | Severidade | Qtde | Itens |
 |---|---|---|
 | 🔴 Crítica (9.0–10.0) | 2 | Forja de JWT (9.8) · Broken Authentication/OTP (9.1) |
-| 🟠 Alta (7.0–8.9) | 4 | SQL Injection (8.8) · SSRF (8.5) · Shell Injection (8.5) · BFLA (7.1) |
-| 🟡 Média (4.0–6.9) | 4 | BOLA (6.5) · Excessive Data Exposure (6.5) · Mass Assignment (6.5) · NoSQL Injection (5.4) |
-| **Total** | **10** | |
+| 🟠 Alta (7.0–8.9) | 5 | SQL Injection (8.8) · SSRF (8.5) · Shell Injection (8.5) · Path Traversal/LFI (7.5) · BFLA (7.1) |
+| 🟡 Média (4.0–6.9) | 5 | BOLA (6.5) · Excessive Data Exposure (6.5) · Mass Assignment (6.5) · Acesso não autenticado (6.5) · NoSQL Injection (5.4) |
+| **Total** | **12** | |
 
 **Destaque:** o item de **Shell Injection** não é uma falha isolada — é o encadeamento de **Mass Assignment + SSRF** para alcançar um ponto de injeção de comando interno. Seu CVSS é **8.5 (Alta)**: o impacto é máximo (RCE, C/I/A altos, escopo alterado), mas a maior **complexidade do ataque** (`AC:H`, por exigir o encadeamento) o mantém abaixo de 9.0. É o exemplo mais claro de como falhas de severidade média, combinadas, produzem impacto severo.
 
@@ -39,10 +39,12 @@ Todas as 10 foram **confirmadas** contra a instância local. Ordenadas por CVSS 
 | 10 | SQL Injection — apply_coupon | Injeção (era API8:2019) | 8.8 | 🟠 Alta | [doc](vulnerabilidades/10-sql-injection.md) |
 | 5 | SSRF | API7 — Server-Side Request Forgery | 8.5 | 🟠 Alta | [doc](vulnerabilidades/05-ssrf.md) |
 | 8 | Shell Injection (Mass Assignment + SSRF) | Cadeia API3 + API7 → injeção de comando | 8.5 | 🟠 Alta | [doc](vulnerabilidades/08-shell-injection.md) |
+| 12 | Path Traversal / LFI — download_report | Path Traversal (relac. API8) | 7.5 | 🟠 Alta | [doc](vulnerabilidades/12-path-traversal.md) |
 | 6 | BFLA — função de admin por usuário comum | API5 — Broken Function Level Authorization | 7.1 | 🟠 Alta | [doc](vulnerabilidades/06-bfla.md) |
 | 1 | BOLA — localização de veículo | API1 — Broken Object Level Authorization | 6.5 | 🟡 Média | [doc](vulnerabilidades/01-bola-localizacao-veiculo.md) |
 | 3 | Excessive Data Exposure | API3 — Broken Object Property Level Authorization | 6.5 | 🟡 Média | [doc](vulnerabilidades/03-excessive-data-exposure.md) |
 | 4 | Mass Assignment | API3 — Broken Object Property Level Authorization | 6.5 | 🟡 Média | [doc](vulnerabilidades/04-mass-assignment.md) |
+| 11 | Acesso não autenticado — endpoints de relatório | API2 — Broken Authentication | 6.5 | 🟡 Média | [doc](vulnerabilidades/11-unauth-access.md) |
 | 9 | NoSQL Injection — cupom sem código | Injeção (era API8:2019) | 5.4 | 🟡 Média | [doc](vulnerabilidades/09-nosql-injection.md) |
 
 ---
@@ -59,6 +61,8 @@ Todas as 10 foram **confirmadas** contra a instância local. Ordenadas por CVSS 
 8. **Shell Injection (chain)** 🟠 — Mass Assignment grava um comando em `conversion_params`; a SSRF alcança o `convert_video` interno; o sink de injeção é atingido. → *RCE potencial.*
 9. **NoSQL Injection** 🟡 — Um operador do MongoDB no `coupon_code` retorna um cupom válido sem saber o código. → *fraude + manipulação de query.*
 10. **SQL Injection** 🟠 — O `coupon_code` entra cru em SQL (error-based e boolean-based confirmados). → *leitura/alteração de dados do banco.*
+11. **Acesso não autenticado** 🟡 — Endpoints de relatório do mecânico não checam o token (falta o decorator de auth); respondem sem `401` e vazam o caminho interno do servidor. → *abuso sem credencial + insumo para o item 12.*
+12. **Path Traversal / LFI** 🟠 — `download_report` valida o nome do arquivo antes do `unquote`; com double-encoding, lê arquivos arbitrários (`/etc/passwd`) sem autenticação. → *leitura de segredos/código do servidor.*
 
 ---
 
