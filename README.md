@@ -16,6 +16,7 @@ O objetivo é demonstrar, de ponta a ponta, o processo de encontrar, explorar de
 
 > 📋 **[Relatório executivo consolidado](docs/RELATORIO-EXECUTIVO.md)** — sumário das 10 falhas com severidade, temas recorrentes e recomendações prioritárias.
 > 🗺️ **[Diagramas](docs/diagramas.md)** — arquitetura do crAPI e encadeamento das vulnerabilidades.
+> 🛠️ **[PoC de correção (SQLi)](docs/poc-correcao-sqli.md)** — patch aplicado no crAPI local, com evidência antes/depois.
 
 ## Vulnerabilidades cobertas
 

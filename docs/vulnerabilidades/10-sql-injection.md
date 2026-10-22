@@ -62,6 +62,8 @@ SQL injection é uma das falhas mais graves: permite **ler, alterar ou apagar** 
 
 ## 6. Como corrigir
 
+> 🛠️ **[PoC de correção](../poc-correcao-sqli.md)** — patch aplicado no crAPI local com o antes/depois comprovando a eliminação da injeção.
+
 - Usar **consultas parametrizadas / prepared statements** (bind de parâmetros) — nunca concatenar entrada do usuário em SQL.
 - Validar/normalizar o formato esperado do `coupon_code`.
 - Princípio do menor privilégio no usuário do banco e tratamento de erros que não vaze detalhes internos.

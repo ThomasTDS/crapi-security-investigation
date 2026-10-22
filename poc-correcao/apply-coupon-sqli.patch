@@ -1,0 +1,20 @@
+--- a/services/workshop/crapi/shop/views.py	2025-09-22 11:58:47.000000000 -0300
++++ b/services/workshop/crapi/shop/views.py	2026-10-22 14:56:41.727221700 -0300
+@@ -385,12 +385,12 @@
+         row = None
+         with connection.cursor() as cursor:
+             try:
++                # Correcao SQLi: consulta parametrizada (bind de parametros).
++                # A entrada do usuario vira valor, nunca fragmento de SQL.
+                 cursor.execute(
+-                    "SELECT coupon_code from applied_coupon WHERE user_id = "
+-                    + str(user.id)
+-                    + " AND coupon_code = '"
+-                    + coupon_request_body["coupon_code"]
+-                    + "'"
++                    "SELECT coupon_code FROM applied_coupon "
++                    "WHERE user_id = %s AND coupon_code = %s",
++                    [user.id, coupon_request_body["coupon_code"]],
+                 )
+                 row = cursor.fetchall()
+             except Exception as e:

@@ -62,6 +62,8 @@ SQL injection is one of the most severe flaws: it allows **reading, altering, or
 
 ## 6. How to fix
 
+> 🛠️ **[Fix PoC](../fix-poc-sqli.md)** — patch applied to the local crAPI with the before/after proving the injection is eliminated.
+
 - Use **parameterized queries / prepared statements** (parameter binding) — never concatenate user input into SQL.
 - Validate/normalize the expected format of `coupon_code`.
 - Least-privilege principle for the database user, and error handling that does not leak internal details.
