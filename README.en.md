@@ -15,6 +15,7 @@ The goal is to demonstrate, end to end, the process of finding, safely exploitin
 ---
 
 > 📋 **[Consolidated executive report](docs/en/executive-report.md)** — summary of the 10 findings with severity, recurring themes, and priority recommendations.
+> 🗺️ **[Diagrams](docs/en/diagrams.md)** — crAPI architecture and vulnerability chaining.
 
 ## Covered vulnerabilities
 
