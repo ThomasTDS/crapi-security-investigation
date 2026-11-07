@@ -70,6 +70,7 @@ Cada documento segue o mesmo formato: classificação OWASP, pré-condições, p
 ├── .zap/
 │   └── rules.tsv                     # ajuste fino de alertas do OWASP ZAP
 └── .github/workflows/
+    ├── newman-evidence.yml           # gera o relatório HTML de evidências (Newman) em CI
     └── zap-baseline.yml              # scan de segurança (ZAP baseline) em CI
 ```
 
@@ -109,6 +110,8 @@ bash scripts/gerar-relatorio-newman.sh
 ```
 
 O script mascara o token JWT real no HTML ao final, então o arquivo é seguro para versionar.
+
+Esse mesmo relatório também pode ser gerado na nuvem pela aba **Actions** do GitHub, pelo workflow [`newman-evidence.yml`](.github/workflows/newman-evidence.yml) (disparo manual, `workflow_dispatch`): ele sobe um crAPI efêmero, roda a coleção de evidências e publica o HTML como artifact da execução.
 
 ---
 
