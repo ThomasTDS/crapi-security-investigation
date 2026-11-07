@@ -30,7 +30,7 @@ Severity by **CVSS v3.1** band (base score):
 
 ## 2. Findings table
 
-All 10 were **confirmed** against the local instance. Ordered by descending CVSS:
+All 12 were **confirmed** against the local instance. Ordered by descending CVSS:
 
 | # | Vulnerability | OWASP API Top 10 (2023) category | CVSS v3.1 | Severity | Detail |
 |---|---|---|---|---|---|

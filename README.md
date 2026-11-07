@@ -14,7 +14,7 @@ O objetivo é demonstrar, de ponta a ponta, o processo de encontrar, explorar de
 
 ---
 
-> 📋 **[Relatório executivo consolidado](docs/RELATORIO-EXECUTIVO.md)** — sumário das 10 falhas com severidade, temas recorrentes e recomendações prioritárias.
+> 📋 **[Relatório executivo consolidado](docs/RELATORIO-EXECUTIVO.md)** — sumário das 12 falhas com severidade, temas recorrentes e recomendações prioritárias.
 > 🗺️ **[Diagramas](docs/diagramas.md)** — arquitetura do crAPI e encadeamento das vulnerabilidades.
 > 🛠️ **[PoC de correção (SQLi)](docs/poc-correcao-sqli.md)** — patch aplicado no crAPI local, com evidência antes/depois.
 
@@ -45,8 +45,15 @@ Cada documento segue o mesmo formato: classificação OWASP, pré-condições, p
 .
 ├── docs/
 │   ├── 00-ambiente-crapi.md          # como subir o crAPI localmente (Docker)
+│   ├── RELATORIO-EXECUTIVO.md        # sumário das 12 falhas, severidade e recomendações
+│   ├── diagramas.md                  # arquitetura do crAPI e encadeamento das falhas
+│   ├── poc-correcao-sqli.md          # PoC de correção da SQL injection (antes/depois)
 │   ├── template-vulnerabilidade.md   # modelo usado para documentar cada falha
-│   └── vulnerabilidades/             # uma análise por vulnerabilidade
+│   ├── vulnerabilidades/             # uma análise por vulnerabilidade (12)
+│   └── en/                           # documentação traduzida (inglês)
+├── poc-correcao/
+│   ├── apply-coupon-sqli.patch       # patch da correção (consulta parametrizada)
+│   └── evidencia-antes-depois.txt    # evidência do ataque neutralizado após o patch
 ├── postman/
 │   ├── crAPI-security.postman_collection.json     # requisições de cada ataque (catálogo)
 │   ├── crAPI-evidencias.postman_collection.json   # coleção auto-suficiente p/ rodar no Newman

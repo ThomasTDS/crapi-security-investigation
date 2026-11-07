@@ -30,7 +30,7 @@ Severidade pela faixa do **CVSS v3.1** (base score):
 
 ## 2. Tabela de findings
 
-Todas as 10 foram **confirmadas** contra a instância local. Ordenadas por CVSS decrescente:
+Todas as 12 foram **confirmadas** contra a instância local. Ordenadas por CVSS decrescente:
 
 | # | Vulnerabilidade | Categoria OWASP API Top 10 (2023) | CVSS v3.1 | Severidade | Detalhe |
 |---|---|---|---|---|---|
